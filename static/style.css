@@ -1,0 +1,20 @@
+.menu {
+    flex-basis: 254px;
+    width: 254px;
+}
+
+#settings,
+#home-button {
+    display: none;
+}
+
+#speed-selector-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+#speed-selector-container > .btn,
+#speed-selector > .btn {
+    margin: 0px;
+    /*font-size: 22px;*/
+}

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+
+<html lang="fr" translate="no">
+
+<head>
+    <title>Télécabine</title>
+    <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+
+    <link rel="stylesheet" href="RealCSS/fonts/material-design-icons/material-design-icons-round.css">
+
+    <link rel="stylesheet" href="RealCSS/fonts/montserrat/montserrat.css">
+
+    <link rel="stylesheet" href="RealCSS/all.min.css">
+
+    <link rel="stylesheet" href="style.css">
+
+    <script src="RealCSS/jquery.min.js"></script>
+
+</head>
+
+<body>
+
+    <div class="navbar">
+        <div class="nav-title">
+            <h3>Télécabine</h3>
+        </div>
+
+        <i class="material-icons-round" id="home-button">undo</i>
+        <i class="material-icons-round" id="settings-button">settings</i>
+    </div>
+
+    <div class="main-container">
+        <div class="app">
+
+            <div id="main">
+                <div class="control">
+                    <h1>Accueil</h1>
+                </div>
+
+                <h3>Statut</h3>
+                <div class="settings-item">
+                    <p>Télécabine</p>
+                    <label class="toggle-switch primary" id="gondola-toggle">
+                        <input type="checkbox">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <h3>Vitesse</h3>
+
+                <div id="speed-selector-container">
+
+                    <button class="btn btn-sp primary ripple-effect" id="slower-button">
+                        <i class="material-icons-round">arrow_back</i>
+                    </button>
+
+                    <div class="modern-dropdown" id="speed-selector">
+                        <button class="btn btn-sp primary ripple-effect">
+                            Vitesse<span class="btn-badge">8</span>
+                            <i class="material-icons-round">expand_more</i>
+                        </button>
+
+                        <div class="dropdown-content">
+                            <button class="btn btn-ol danger ripple-effect" data-value="1">1</button>
+                            <button class="btn btn-ol danger ripple-effect" data-value="2">2</button>
+                            <button class="btn btn-ol warning ripple-effect" data-value="3">3</button>
+                            <button class="btn btn-ol warning ripple-effect" data-value="4">4</button>
+                            <button class="btn btn-ol warning ripple-effect" data-value="5">5</button>
+                            <button class="btn btn-ol success ripple-effect" data-value="6">6</button>
+                            <button class="btn btn-ol success ripple-effect" data-value="7">7</button>
+                            <button class="btn btn-ol success ripple-effect" data-value="8">8</button>
+                            <button class="btn btn-ol success ripple-effect" data-value="9">9</button>
+                            <button class="btn btn-ol warning ripple-effect" data-value="10">10</button>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-sp primary ripple-effect" id="faster-button">
+                        <i class="material-icons-round">arrow_forward</i>
+                    </button>
+
+                </div>
+
+                <div class="progress-bar">
+                    <div class="progress" id="speed-progress"></div>
+                </div>
+            </div>
+
+            <div id="settings">
+                <div class="control">
+                    <h1>Paramètres</h1>
+                    <button class="btn btn-sp primary btn-sm ripple-effect" id="back-button">
+                        <i class="material-icons-round">undo</i>
+                    </button>
+                </div>
+                <div class="settings-item">
+                    <p>Thème sombre</p>
+                    <label class="toggle-switch primary dark-theme-toggle-switch">
+                        <input type="checkbox">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="RealCSS/all.min.js"></script>
+    <script src="script.js"></script>
+
+</body>
+
+</html>
