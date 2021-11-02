@@ -1,5 +1,4 @@
-from flask import Flask, Response, redirect, send_from_directory, request
-import queue
+from flask import Flask, redirect, send_from_directory, request
 
 app = Flask(__name__)
 
