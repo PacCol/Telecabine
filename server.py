@@ -1,12 +1,17 @@
+import time
+
+time.sleep(4)
+
 from flask import Flask, redirect, send_from_directory, request
+from datetime import datetime
 
 app = Flask(__name__)
 
-import sse
-
+import sse, motor
 
 enabled = False
 speed = 8
+lastInteraction = datetime.now()
 
 
 @app.route("/")
@@ -26,7 +31,6 @@ def pingStatus():
 
 
 def sendStatus():
-    global enabled
 
     if enabled:
         msg = sse.format_sse(data="status:enabled,speed:" + str(speed))
@@ -38,18 +42,26 @@ def sendStatus():
 
 @app.route("/api/enable", methods=["POST"])
 def enable():
-    global enabled
-    enabled = request.json["enable"]
-    sendStatus()
+    changeStatus(request.json["enable"], speed)
     return "enabled"
 
 
 @app.route("/api/speed", methods=["POST"])
 def setSpeed():
-    global speed
-    speed = request.json["speed"]
+    changeStatus(enabled, request.json["speed"])
+    return "changed"
+
+
+def changeStatus(newState, newSpeed):
+    global enabled, speed, lastInteraction
+    enabled = newState
+    speed = newSpeed
+    motor.enable(enabled, speed)
     sendStatus()
-    return "enabled"
+    lastInteraction = datetime.now()
+    display.showSpeed()
 
 
-app.run(host="0.0.0.0", port=5000)
+import rotary, display
+
+app.run(host="0.0.0.0", port=80)
