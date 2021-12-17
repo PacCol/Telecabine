@@ -1,9 +1,8 @@
 from RPi import GPIO
 from time import sleep
 from threading import Thread
-from datetime import datetime
 
-import __main__, motor
+import __main__
 
 def rotary():
 

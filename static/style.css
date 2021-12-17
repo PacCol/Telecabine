@@ -1,3 +1,7 @@
+body {
+    user-select: none;
+}
+
 .menu {
     flex-basis: 254px;
     width: 254px;
@@ -16,5 +20,4 @@
 #speed-selector-container > .btn,
 #speed-selector > .btn {
     margin: 0px;
-    /*font-size: 22px;*/
 }

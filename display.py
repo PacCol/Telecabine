@@ -9,6 +9,7 @@ tm = tm1637.TM1637(clk=27, dio=17)
 
 dontWait = False
 
+
 def display():
 
     global __main__, dontWait
@@ -21,9 +22,9 @@ def display():
 
         if limitDate < now and not __main__.enabled: 
             tm.numbers(int(now.strftime("%H")), int(now.strftime("%M")))
-            smartSleep(0.5)
-            tm.number(int(now.strftime("%H") + now.strftime("%M")))
-            smartSleep(0.5)
+            if smartSleep(0.5):
+                tm.number(int(now.strftime("%H") + now.strftime("%M")))
+                smartSleep(0.5)
 
         else:
             if __main__.enabled:
@@ -31,23 +32,25 @@ def display():
                 smartSleep(1)
             else:
                 tm.number(__main__.speed)
-                smartSleep(0.5)
-                tm.write([0, 0, 0, 0])
-                smartSleep(0.5)
+                if smartSleep(0.5):
+                    tm.write([0, 0, 0, 0])
+                    smartSleep(0.5)
 
 
 def smartSleep(time):
-    global dontWait
 
+    global dontWait
     i = 0
 
     while i < time:
         if dontWait:
             dontWait = False
-            return
+            return False
         else:
             sleep(0.10)
         i+=0.10
+
+    return True
 
 
 def showSpeed():

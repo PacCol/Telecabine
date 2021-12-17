@@ -1,6 +1,6 @@
 import time
 
-time.sleep(4)
+time.sleep(0)
 
 from flask import Flask, redirect, send_from_directory, request
 from datetime import datetime
@@ -17,6 +17,11 @@ lastInteraction = datetime.now()
 @app.route("/")
 def index():
     return redirect("/config/index.html")
+
+
+@app.route("/favicon.ico")
+def favicon():
+    return send_from_directory("static", "favicon.ico")
 
 
 @app.route("/config/<path:path>")

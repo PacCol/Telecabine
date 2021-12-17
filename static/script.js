@@ -6,7 +6,7 @@ $("#settings-button").click(function () {
     });
 });
 
-$("#back-button, #home-button").click(function () {
+$("#home-button").click(function () {
     $("#home-button").fadeOut(150);
     $("#settings").fadeOut(150).promise().done(function () {
         $("#main").fadeIn(150);
@@ -67,19 +67,70 @@ source.onerror = function () {
 
 $("#gondola-toggle input").change(function () {
     if (this.checked) {
-        var enable = true;
-    } else {
-        var enable = false;
+        console.log("gg");
+        changeState(true);
     }
+    else {
+        changeState(false);
+    }
+});
+
+$("#slower-button").click(function () {
+    slower();
+});
+
+$("#speed-selector .dropdown-content .btn").click(function () {
+    var requestedSpeed = parseInt($(this).data("value"));
+    setSpeed(requestedSpeed);
+});
+
+$("#faster-button").click(function () {
+    faster();
+});
+
+$("body").keydown(function(e) {
+    if (e.which == 37) {
+        slower();
+    } else if (e.which == 39) {
+        faster();
+    } else if (e.which == 13 || e.which == 32) {
+        if ($("#gondola-toggle input").prop("checked")) {
+            changeState(false);
+        } else {
+            changeState(true);
+        }
+    } else if (e.which == 49) {
+        setSpeed(1);
+    } else if (e.which == 50) {
+        setSpeed(2);
+    } else if (e.which == 51) {
+        setSpeed(3);
+    } else if (e.which == 52) {
+        setSpeed(4);
+    } else if (e.which == 53) {
+        setSpeed(5);
+    } else if (e.which == 54) {
+        setSpeed(6);
+    } else if (e.which == 55) {
+        setSpeed(7);
+    } else if (e.which == 56) {
+        setSpeed(8);
+    } else if (e.which == 57) {
+        setSpeed(9);
+    } else if (e.which == 48) {
+        setSpeed(10);
+    }
+});
+
+function changeState(wantToEnable) {
 
     loader(true);
 
     $.ajax({
         type: "POST",
         url: "/api/enable",
-        data: JSON.stringify({ enable: enable }),
+        data: JSON.stringify({ enable: wantToEnable }),
         contentType: "application/json",
-
 
         success: function () {
             loader(false);
@@ -92,26 +143,21 @@ $("#gondola-toggle input").change(function () {
 
         timeout: 3000
     });
-});
+}
 
-$("#slower-button").click(function () {
+function slower() {
     var actualSpeed = parseInt($("#speed-selector .btn-badge").text());
     if (actualSpeed != 1) {
         setSpeed(actualSpeed - 1);
     }
-});
+}
 
-$("#speed-selector .dropdown-content .btn").click(function () {
-    var requestedSpeed = parseInt($(this).data("value"));
-    setSpeed(requestedSpeed);
-});
-
-$("#faster-button").click(function () {
+function faster() {
     var actualSpeed = parseInt($("#speed-selector .btn-badge").text());
     if (actualSpeed != 10) {
         setSpeed(actualSpeed + 1);
     }
-});
+}
 
 function setSpeed(requestedSpeed) {
 
