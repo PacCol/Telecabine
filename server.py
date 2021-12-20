@@ -7,9 +7,10 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-import sse, motor
+import sse, motor, lights
 
 enabled = False
+lightsEnabled = False
 speed = 8
 lastInteraction = datetime.now()
 
@@ -38,16 +39,28 @@ def pingStatus():
 def sendStatus():
 
     if enabled:
-        msg = sse.format_sse(data="status:enabled,speed:" + str(speed))
+        status = "enabled"
     else:
-        msg = sse.format_sse(data="status:disabled,speed:" + str(speed))
+        status = "disabled"
 
+    if lightsEnabled:
+        ledStatus = "enabled"
+    else:
+        ledStatus= "disabled"
+
+    msg = sse.format_sse(data="status:" + status + ",speed:" + str(speed) + ",ledStatus:" + ledStatus)
     sse.announcer.announce(msg=msg)
 
 
 @app.route("/api/enable", methods=["POST"])
 def enable():
     changeStatus(request.json["enable"], speed)
+    return "enabled"
+
+
+@app.route("/api/enablelights", methods=["POST"])
+def enableLights():
+    illuminatedButton.changeStatus(request.json["enable"])
     return "enabled"
 
 
@@ -67,6 +80,6 @@ def changeStatus(newState, newSpeed):
     display.showSpeed()
 
 
-import rotary, display
+import rotary, display, illuminatedButton
 
 app.run(host="0.0.0.0", port=80)

@@ -18,12 +18,12 @@ def display():
 
         now = datetime.now()
 
-        limitDate = __main__.lastInteraction + timedelta(0, 5)
+        limitDate = __main__.lastInteraction + timedelta(0, 10)
 
         if limitDate < now and not __main__.enabled: 
             tm.numbers(int(now.strftime("%H")), int(now.strftime("%M")))
             if smartSleep(0.5):
-                tm.number(int(now.strftime("%H") + now.strftime("%M")))
+                tm.numbers(int(now.strftime("%H")), int(now.strftime("%M")), False)
                 smartSleep(0.5)
 
         else:

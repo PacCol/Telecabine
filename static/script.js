@@ -44,18 +44,22 @@ $(document).ready(function () {
 
 source.onmessage = function (msg) {
 
-    console.log(msg.data);
-
-    gondolaStatus = msg.data.split(":")[1].split(",")[0];
-    speed = parseInt(msg.data.split(":")[2]);
+    var gondolaStatus = msg.data.split(":")[1].split(",")[0];
+    var speed = parseInt(msg.data.split(":")[2]);
+    var lightsStatus = msg.data.split(":")[3];
 
     console.log(gondolaStatus);
-    console.log(speed);
 
     if (gondolaStatus == "enabled") {
         $("#gondola-toggle input").prop("checked", true);
-    } else if (gondolaStatus == "disabled") {
+    } else {
         $("#gondola-toggle input").prop("checked", false);
+    }
+
+    if (lightsStatus == "enabled") {
+        $("#lights-toggle input").prop("checked", true);
+    } else {
+        $("#lights-toggle input").prop("checked", false);
     }
 
     displaySpeed("#speed-progress", speed);
@@ -67,11 +71,19 @@ source.onerror = function () {
 
 $("#gondola-toggle input").change(function () {
     if (this.checked) {
-        console.log("gg");
         changeState(true);
     }
     else {
         changeState(false);
+    }
+});
+
+$("#lights-toggle input").change(function () {
+    if (this.checked) {
+        enableLights(true);
+    }
+    else {
+        enableLights(false);
     }
 });
 
@@ -89,11 +101,13 @@ $("#faster-button").click(function () {
 });
 
 $("body").keydown(function(e) {
+    console.log(e.which);
     if (e.which == 37) {
         slower();
     } else if (e.which == 39) {
         faster();
     } else if (e.which == 13 || e.which == 32) {
+        e.preventDefault();
         if ($("#gondola-toggle input").prop("checked")) {
             changeState(false);
         } else {
@@ -119,6 +133,13 @@ $("body").keydown(function(e) {
         setSpeed(9);
     } else if (e.which == 48) {
         setSpeed(10);
+    } else if (e.which == 76) {
+        if ($("#lights-toggle input").prop("checked")) {
+            enableLights(false);
+        }
+        else {
+            enableLights(true);
+        }
     }
 });
 
@@ -129,6 +150,29 @@ function changeState(wantToEnable) {
     $.ajax({
         type: "POST",
         url: "/api/enable",
+        data: JSON.stringify({ enable: wantToEnable }),
+        contentType: "application/json",
+
+        success: function () {
+            loader(false);
+        },
+
+        error: function () {
+            loader(false);
+            networkError();
+        },
+
+        timeout: 3000
+    });
+}
+
+function enableLights(wantToEnable) {
+
+    loader(true);
+
+    $.ajax({
+        type: "POST",
+        url: "/api/enablelights",
         data: JSON.stringify({ enable: wantToEnable }),
         contentType: "application/json",
 
