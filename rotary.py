@@ -11,8 +11,6 @@ rotaryButton = gpiozero.Button(14)
 def changeSpeed():
     selectedSpeed = rotor.steps + 5
 
-    print(selectedSpeed)
-
     if selectedSpeed == 0:
         rotor.steps = selectedSpeed - 5
         __main__.changeStatus(False, 1)

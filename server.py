@@ -1,6 +1,15 @@
-import time
+import gpiozero
+from time import sleep
 
-time.sleep(0)
+from gpiozero.internal_devices import CPUTemperature
+
+google = gpiozero.PingServer("google.com")
+
+while True:
+    if google.is_active:
+        break
+    sleep(0.3)
+
 
 from flask import Flask, redirect, send_from_directory, request
 from datetime import datetime
@@ -13,6 +22,8 @@ enabled = False
 lightsEnabled = False
 speed = 8
 lastInteraction = datetime.now()
+
+cpu = gpiozero.CPUTemperature()
 
 
 @app.route("/")
@@ -68,6 +79,10 @@ def enableLights():
 def setSpeed():
     changeStatus(enabled, request.json["speed"])
     return "changed"
+
+@app.route("/api/cpuTemp", methods=["GET"])
+def getCPUTemp():
+    return str(int(cpu.temperature)) + " °C"
 
 
 def changeStatus(newState, newSpeed):

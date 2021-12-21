@@ -22,7 +22,18 @@ function networkError() {
 
 var source = new EventSource("/listen");
 
-$(document).ready(function () {
+askStatusWhenReady();
+
+function askStatusWhenReady() {
+    if (source.readyState) {
+        askStatus
+    } else {
+        setTimeout(askStatus, 200);
+    }
+}
+
+function askStatus() {
+
     loader(true);
 
     $.ajax({
@@ -40,15 +51,13 @@ $(document).ready(function () {
 
         timeout: 3000
     });
-});
+}
 
 source.onmessage = function (msg) {
 
     var gondolaStatus = msg.data.split(":")[1].split(",")[0];
     var speed = parseInt(msg.data.split(":")[2]);
     var lightsStatus = msg.data.split(":")[3];
-
-    console.log(gondolaStatus);
 
     if (gondolaStatus == "enabled") {
         $("#gondola-toggle input").prop("checked", true);
@@ -100,8 +109,7 @@ $("#faster-button").click(function () {
     faster();
 });
 
-$("body").keydown(function(e) {
-    console.log(e.which);
+$("body").keydown(function (e) {
     if (e.which == 37) {
         slower();
     } else if (e.which == 39) {
@@ -191,7 +199,9 @@ function enableLights(wantToEnable) {
 
 function slower() {
     var actualSpeed = parseInt($("#speed-selector .btn-badge").text());
-    if (actualSpeed != 1) {
+    if (actualSpeed == 1) {
+        changeState(false);
+    } else {
         setSpeed(actualSpeed - 1);
     }
 }
@@ -243,3 +253,29 @@ function displaySpeed(progress, speed) {
     }
     $(progress).css("width", speed * 10 + "%");
 }
+
+function showCPUTemp() {
+
+    loader(true);
+
+    $.ajax({
+        type: "GET",
+        url: "/api/cpuTemp",
+
+        success: function (response) {
+            loader(false);
+            $("#cpuTemp-indic").text("Température du CPU: " + response);
+        },
+
+        error: function () {
+            loader(false);
+            networkError();
+        },
+
+        timeout: 3000
+    });
+}
+
+showCPUTemp();
+
+$("#cpuTemp").click(askStatusWhenReady);
