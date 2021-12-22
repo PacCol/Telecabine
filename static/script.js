@@ -1,3 +1,7 @@
+/////////////////////////////////////////
+//////////// TWO SECTIONS ///////////////
+/////////////////////////////////////////
+
 $("#settings-button").click(function () {
     $("#settings-button").fadeOut(150);
     $("#main").fadeOut(150).promise().done(function () {
@@ -14,11 +18,21 @@ $("#home-button").click(function () {
     });
 });
 
+
+/////////////////////////////////////////
+//////////// ERROR MANAGEMENT ///////////
+/////////////////////////////////////////
+
 function networkError() {
     alertBox("Erreur réseau", "Impossible de se connecter...", `
         <button class="btn btn-sp primary btn-align-right ripple-effect"
         onclick="document.location.reload();">Fermer</button>`);
 }
+
+
+/////////////////////////////////////////
+//////////// SERVER SENT EVENTS /////////
+/////////////////////////////////////////
 
 var source = new EventSource("/listen");
 
@@ -78,6 +92,11 @@ source.onerror = function () {
     networkError();
 }
 
+
+/////////////////////////////////////////
+//////////// BUTTONS, TOGGLES ///////////
+/////////////////////////////////////////
+
 $("#gondola-toggle input").change(function () {
     if (this.checked) {
         changeState(true);
@@ -108,6 +127,11 @@ $("#speed-selector .dropdown-content .btn").click(function () {
 $("#faster-button").click(function () {
     faster();
 });
+
+
+/////////////////////////////////////////
+//////////// KEYBOARD SHORTCUTS /////////
+/////////////////////////////////////////
 
 $("body").keydown(function (e) {
     if (e.which == 37) {
@@ -151,6 +175,11 @@ $("body").keydown(function (e) {
     }
 });
 
+
+/////////////////////////////////////////
+//////////// ENABLE AND DISABLE /////////
+/////////////////////////////////////////
+
 function changeState(wantToEnable) {
 
     loader(true);
@@ -174,6 +203,11 @@ function changeState(wantToEnable) {
     });
 }
 
+
+/////////////////////////////////////////
+//////////// LIGHTS /////////////////////
+/////////////////////////////////////////
+
 function enableLights(wantToEnable) {
 
     loader(true);
@@ -196,6 +230,10 @@ function enableLights(wantToEnable) {
         timeout: 3000
     });
 }
+
+/////////////////////////////////////////
+//////////// SPEED CONTROL //////////////
+/////////////////////////////////////////
 
 function slower() {
     var actualSpeed = parseInt($("#speed-selector .btn-badge").text());
@@ -253,6 +291,61 @@ function displaySpeed(progress, speed) {
     }
     $(progress).css("width", speed * 10 + "%");
 }
+
+
+/////////////////////////////////////////
+//////////// BACKGROUND IMAGE ///////////
+/////////////////////////////////////////
+
+if (localStorage.getItem("bg-img") == "true") {
+    $("body").addClass("bg-img");
+    $(".settings-item:has(.dark-theme-toggle-switch)").hide();
+    enableDarkTheme(true);
+    $("#bg-img-toggle input").prop("checked", true);
+}
+
+$("#bg-img-toggle input").change(function() {
+    if (this.checked) {
+        $("body").addClass("bg-img");
+        $(".settings-item:has(.dark-theme-toggle-switch)").hide();
+        enableDarkTheme(true);
+        localStorage.setItem("bg-img", "true");
+    } else {
+        $("body").removeClass("bg-img");
+        $(".settings-item:has(.dark-theme-toggle-switch)").show();
+        localStorage.setItem("bg-img", "false");
+    }
+});
+
+$("#setImg").click(function(e) {
+
+    e.stopPropagation();
+
+    alertBox("Définir l'image d'arrière-plan", "", `
+        <div class="modern-input primary">
+            <input type="text" id="new-img" placeholder=" " autocomplete="img-url">
+            <p>Entrez l'url de l'image</p>
+        </div>
+        <button class="btn btn-sp primary ripple-effect cancel" onclick="setImg();">Définir</button>
+        <button class="btn btn-ol primary btn-align-right ripple-effect cancel">Fermer</button>`);
+});
+
+imgUrl = localStorage.getItem("bg-img-url");
+
+if (imgUrl !== null) {
+    $("body").css("--img-url", "url(" + imgUrl + ")");
+}
+
+function setImg() {
+    imgUrl = $("#new-img").val();
+    localStorage.setItem("bg-img-url", imgUrl);
+    $("body").css("--img-url", "url(" + imgUrl + ")");
+}
+
+
+/////////////////////////////////////////
+//////////// CPU TEMP ///////////////////
+/////////////////////////////////////////
 
 function showCPUTemp() {
 

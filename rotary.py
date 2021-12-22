@@ -12,6 +12,7 @@ def changeSpeed():
     selectedSpeed = rotor.steps + 5
 
     if selectedSpeed == 0:
+        selectedSpeed = 1
         rotor.steps = selectedSpeed - 5
         __main__.changeStatus(False, 1)
     else:
