@@ -17,6 +17,7 @@ bigFont = ImageFont.truetype(fontPath, 34)
 
 iconPath = "display/material-design-icons-round.ttf"
 icon = ImageFont.truetype(iconPath, 12)
+bigIcon = ImageFont.truetype(iconPath, 50)
 
 isDisplaying = False
 isSleeping = False
@@ -62,3 +63,12 @@ def putToSleep():
 def showHomeScreen():
     displayThread = Thread(target=showHomeScreenWithoutThreading, args=())
     displayThread.start()
+
+
+def displayOff():
+
+    device.clear()
+
+    with canvas(device) as draw:
+        iconSize = bigIcon.getsize("\ue646")
+        draw.text(((device.width - iconSize[0]) / 2, 0(device.width - iconSize[1]) / 2), "\ue518", fill=1, font=icon)

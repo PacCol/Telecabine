@@ -1,4 +1,4 @@
-//loaderDelay = 7000;
+loaderDelay = 7000;
 
 $(document).ready(function() {
     $("body").fadeIn(300);
@@ -78,6 +78,7 @@ source.onmessage = function (msg) {
     var speed = parseInt(msg.data.split(":")[1]);
     var lightsStatus = msg.data.split(":")[2];
 
+    $(".alert-shadow").fadeOut(300);
     //console.log(msg.data);
     //console.log(speed);
     //console.log(lightsStatus);
@@ -192,7 +193,15 @@ $("body").keyup(function (e) {
 //////////// LIGHTS /////////////////////
 /////////////////////////////////////////
 
+var processingRequest = false;
+
 function enableLights(wantToEnable) {
+
+    if (processingRequest) {
+        return;
+    } else {
+        processingRequest = true;
+    }
 
     loader(true);
 
@@ -204,10 +213,12 @@ function enableLights(wantToEnable) {
 
         success: function () {
             loader(false);
+            processingRequest = false;
         },
 
         error: function () {
             loader(false);
+            processingRequest = false;
             networkError();
         },
 
@@ -236,6 +247,12 @@ function faster() {
 
 function setSpeed(requestedSpeed) {
 
+    if (processingRequest) {
+        return;
+    } else {
+        processingRequest = true;
+    }
+
     loader(true);
 
     var start = new Date();  
@@ -248,6 +265,7 @@ function setSpeed(requestedSpeed) {
 
         success: function () {
             loader(false);
+            processingRequest = false;
             end = new Date();
 	        diff = end - start;
 	        diff = new Date(diff);
@@ -256,6 +274,7 @@ function setSpeed(requestedSpeed) {
 
         error: function () {
             loader(false);
+            processingRequest = false;
             networkError();
         },
 

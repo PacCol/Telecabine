@@ -46,8 +46,7 @@ def displayStatus():
 
 
 def displayOFF():
-    global showOFF
-    showOFF = True
+    oled.displayOff()
 
 
 displayStatus()

@@ -43,8 +43,7 @@ def toggleStatus():
 
 def shutdown():
     display.displayOFF()
-    sleep(1)
-    check_call(['sudo', 'poweroff'])
+    #check_call(['sudo', 'poweroff'])
 
 
 button.when_released = toggleStatus
