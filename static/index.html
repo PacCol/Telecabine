@@ -27,8 +27,13 @@
             <h3>Télécabine</h3>
         </div>
 
+        <button class="btn btn-lt danger ripple-effect" id="emergency">
+            Arrêt <i class="material-icons-round">pan_tool</i>
+        </button>
+
         <i class="material-icons-round" id="home-button">undo</i>
         <i class="material-icons-round" id="settings-button">settings</i>
+
     </div>
 
     <div class="main-container">
@@ -37,23 +42,6 @@
             <div id="main">
                 <div class="control">
                     <h1>Accueil</h1>
-                </div>
-
-                <h3>Statut</h3>
-                <div class="settings-item ripple-effect primary">
-                    <p>Télécabine</p>
-                    <label class="toggle-switch" id="gondola-toggle">
-                        <input type="checkbox">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-
-                <div class="settings-item ripple-effect primary">
-                    <p>Lumières</p>
-                    <label class="toggle-switch" id="lights-toggle">
-                        <input type="checkbox">
-                        <span class="slider"></span>
-                    </label>
                 </div>
 
                 <h3>Vitesse</h3>
@@ -66,11 +54,12 @@
 
                     <div class="modern-dropdown" id="speed-selector">
                         <button class="btn btn-sp primary ripple-effect">
-                            Vitesse<span class="btn-badge">8</span>
+                            Vitesse<span class="btn-badge">0</span>
                             <i class="material-icons-round">expand_more</i>
                         </button>
 
                         <div class="dropdown-content">
+                            <button class="btn btn-ol danger ripple-effect" data-value="0">0</button>
                             <button class="btn btn-ol danger ripple-effect" data-value="1">1</button>
                             <button class="btn btn-ol danger ripple-effect" data-value="2">2</button>
                             <button class="btn btn-ol warning ripple-effect" data-value="3">3</button>
@@ -91,7 +80,22 @@
                 </div>
 
                 <div class="progress-bar">
-                    <div class="progress" id="speed-progress"></div>
+                    <div id="backward">
+                        <div class="progress" id="backward-progress"></div>
+                    </div>
+                    <div id="forward">
+                        <div class="progress" id="forward-progress"></div>
+                    </div>
+                </div>
+
+                <h3>Lumières</h3>
+
+                <div class="settings-item ripple-effect primary">
+                    <p>Lumières</p>
+                    <label class="toggle-switch" id="lights-toggle">
+                        <input type="checkbox">
+                        <span class="slider"></span>
+                    </label>
                 </div>
             </div>
 
@@ -119,11 +123,20 @@
                     </label>
                 </div>
 
+                <div class="settings-item">
+                    <p>Réinitialiser</p>
+                    <i class="material-icons-round" id="reset">delete_forever</i>
+                </div>
+
                 <h3>Hardware</h3>
+
                 <div class="settings-item">
                     <p id="cpuTemp-indic">Température du CPU: -</p>
                     <i class="material-icons-round" id="cpuTemp">refresh</i>
                 </div>
+
+                <p>Pour mettre en veille la machine, appuyez de manière prolongée sur la molette.</p>
+                <p>Pour éteindre la machine, appuyez pendant de manière prolongée sur le bouton de la lumière.</p>
 
                 <h3>Raccourcis clavier</h3>
                 <div class="table-container">
@@ -198,7 +211,14 @@
         </div>
     </div>
 
-    <script src="RealCSS/all.min.js"></script>
+    <script src="RealCSS/js/alert.js"></script>
+    <script src="RealCSS/js/loader.js"></script>
+    <script src="RealCSS/js/dark-theme.js"></script>
+    <script src="RealCSS/js/dropdown.js"></script>
+    <script src="RealCSS/js/menu.js"></script>
+    <script src="RealCSS/js/ripple.js"></script>
+    <script src="RealCSS/js/navbar.js"></script>
+    <script src="RealCSS/js/settings-item.js"></script>
     <script src="script.js"></script>
 
 </body>

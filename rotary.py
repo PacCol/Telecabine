@@ -1,30 +1,19 @@
 import gpiozero
+from time import sleep
 
 import __main__
 
-rotor = gpiozero.RotaryEncoder(15, 18, wrap=False, max_steps=5)
-rotor.steps = __main__.speed - 5
+rotor = gpiozero.RotaryEncoder(15, 18, wrap=False, max_steps=10)
+rotor.steps = __main__.speed
 
 rotaryButton = gpiozero.Button(14)
 
-
 def changeSpeed():
-    selectedSpeed = rotor.steps + 5
-
-    if selectedSpeed == 0:
-        selectedSpeed = 1
-        rotor.steps = selectedSpeed - 5
-        __main__.changeStatus(False, 1)
-    else:
-        __main__.changeStatus(__main__.enabled, selectedSpeed)
-
+    __main__.changeStatus(rotor.steps)
+    sleep(0.05)
 
 def toggleStatus():
-    if __main__.enabled:
-        __main__.changeStatus(False, __main__.speed)
-    else:
-        __main__.changeStatus(True, __main__.speed)
-
+    __main__.changeStatus(0)
 
 rotor.when_rotated = changeSpeed
 rotaryButton.when_released = toggleStatus

@@ -9,6 +9,12 @@ body.bg-img {
     background-size: cover;
 }
 
+body.bg-img h1,
+body.bg-img h3,
+body.bg-img p {
+    text-shadow: 0 0 2px #000000;
+}
+
 body.bg-img .navbar {
     background-color: unset;
 }
@@ -43,4 +49,24 @@ body.bg-img .table-container {
 #speed-selector-container > .btn,
 #speed-selector > .btn {
     margin: 0px;
+}
+
+#backward {
+    width: 50%;
+    float: left;
+}
+
+#backward-progress {
+    float: right;
+}
+
+#forward {
+    width: 50%;
+    float: right;
+}
+
+#emergency {
+    width: fit-content;
+    margin-left: auto;
+    font-size: 13px;
 }

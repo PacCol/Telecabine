@@ -1,3 +1,9 @@
+//loaderDelay = 7000;
+
+$(document).ready(function() {
+    $("body").fadeIn(300);
+});
+
 /////////////////////////////////////////
 //////////// TWO SECTIONS ///////////////
 /////////////////////////////////////////
@@ -69,15 +75,12 @@ function askStatus() {
 
 source.onmessage = function (msg) {
 
-    var gondolaStatus = msg.data.split(":")[1].split(",")[0];
-    var speed = parseInt(msg.data.split(":")[2]);
-    var lightsStatus = msg.data.split(":")[3];
+    var speed = parseInt(msg.data.split(":")[1]);
+    var lightsStatus = msg.data.split(":")[2];
 
-    if (gondolaStatus == "enabled") {
-        $("#gondola-toggle input").prop("checked", true);
-    } else {
-        $("#gondola-toggle input").prop("checked", false);
-    }
+    //console.log(msg.data);
+    //console.log(speed);
+    //console.log(lightsStatus);
 
     if (lightsStatus == "enabled") {
         $("#lights-toggle input").prop("checked", true);
@@ -85,7 +88,16 @@ source.onmessage = function (msg) {
         $("#lights-toggle input").prop("checked", false);
     }
 
-    displaySpeed("#speed-progress", speed);
+    if (speed < 0) {
+        displaySpeed("#backward-progress", speed);
+        $("#forward-progress").css("width", "0px");
+    } else if (speed > 0) {
+        displaySpeed("#forward-progress", speed);
+        $("#backward-progress").css("width", "0px");
+    } else {
+        displaySpeed("#backward-progress", speed);
+        displaySpeed("#forward-progress", speed);
+    }
 }
 
 source.onerror = function () {
@@ -128,23 +140,23 @@ $("#faster-button").click(function () {
     faster();
 });
 
+$("#emergency").click(function() {
+    setSpeed(0);
+});
+
 
 /////////////////////////////////////////
 //////////// KEYBOARD SHORTCUTS /////////
 /////////////////////////////////////////
 
-$("body").keydown(function (e) {
+$("body").keyup(function (e) {
     if (e.which == 37) {
         slower();
     } else if (e.which == 39) {
         faster();
     } else if (e.which == 13 || e.which == 32) {
         e.preventDefault();
-        if ($("#gondola-toggle input").prop("checked")) {
-            changeState(false);
-        } else {
-            changeState(true);
-        }
+        setSpeed(0);
     } else if (e.which == 49) {
         setSpeed(1);
     } else if (e.which == 50) {
@@ -177,34 +189,6 @@ $("body").keydown(function (e) {
 
 
 /////////////////////////////////////////
-//////////// ENABLE AND DISABLE /////////
-/////////////////////////////////////////
-
-function changeState(wantToEnable) {
-
-    loader(true);
-
-    $.ajax({
-        type: "POST",
-        url: "/api/enable",
-        data: JSON.stringify({ enable: wantToEnable }),
-        contentType: "application/json",
-
-        success: function () {
-            loader(false);
-        },
-
-        error: function () {
-            loader(false);
-            networkError();
-        },
-
-        timeout: 3000
-    });
-}
-
-
-/////////////////////////////////////////
 //////////// LIGHTS /////////////////////
 /////////////////////////////////////////
 
@@ -231,15 +215,14 @@ function enableLights(wantToEnable) {
     });
 }
 
+
 /////////////////////////////////////////
 //////////// SPEED CONTROL //////////////
 /////////////////////////////////////////
 
 function slower() {
     var actualSpeed = parseInt($("#speed-selector .btn-badge").text());
-    if (actualSpeed == 1) {
-        changeState(false);
-    } else {
+    if (actualSpeed != -10) {
         setSpeed(actualSpeed - 1);
     }
 }
@@ -255,15 +238,20 @@ function setSpeed(requestedSpeed) {
 
     loader(true);
 
+    var start = new Date();  
+
     $.ajax({
         type: "POST",
         url: "/api/speed",
         data: JSON.stringify({ speed: requestedSpeed }),
         contentType: "application/json",
 
-
         success: function () {
             loader(false);
+            end = new Date();
+	        diff = end - start;
+	        diff = new Date(diff);
+            console.log("TIMING: " + diff.getMilliseconds());
         },
 
         error: function () {
@@ -276,20 +264,21 @@ function setSpeed(requestedSpeed) {
 }
 
 function displaySpeed(progress, speed) {
+
     $("#speed-selector .btn-badge").text(speed);
 
     $(progress).closest(".progress-bar").removeClass("success");
     $(progress).closest(".progress-bar").removeClass("warning");
     $(progress).closest(".progress-bar").removeClass("danger");
 
-    if (speed < 3) {
+    if (Math.abs(speed) < 3) {
         $(progress).closest(".progress-bar").addClass("danger");
-    } else if (speed == 10 || speed < 6) {
+    } else if (Math.abs(speed) == 10 || Math.abs(speed) < 6) {
         $(progress).closest(".progress-bar").addClass("warning");
     } else {
         $(progress).closest(".progress-bar").addClass("success");
     }
-    $(progress).css("width", speed * 10 + "%");
+    $(progress).css("width", Math.abs(speed) * 10 + "%");
 }
 
 
@@ -327,7 +316,7 @@ $("#setImg").click(function(e) {
             <p>Entrez l'url de l'image</p>
         </div>
         <button class="btn btn-sp primary ripple-effect cancel" onclick="setImg();">Définir</button>
-        <button class="btn btn-ol primary btn-align-right ripple-effect cancel">Fermer</button>`);
+        <button class="btn btn-lt primary btn-align-right ripple-effect cancel">Fermer</button>`);
 });
 
 imgUrl = localStorage.getItem("bg-img-url");
@@ -372,3 +361,20 @@ function showCPUTemp() {
 showCPUTemp();
 
 $("#cpuTemp").click(askStatusWhenReady);
+
+
+/////////////////////////////////////////
+//////////// RESET //////////////////////
+/////////////////////////////////////////
+
+$("#reset").click(function() {
+
+    alertBox("Réinitialisation", "Êtes-vous sûr de vouloir réinitialiser les paramètres locaux ?", `
+        <button class="btn btn-sp warning ripple-effect cancel" onclick="reset();">Réinitialiser</button>
+        <button class="btn btn-lt warning btn-align-right ripple-effect cancel">Fermer</button>`);
+});
+
+function reset() {
+    localStorage.clear();
+    document.location.reload();
+}

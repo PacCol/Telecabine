@@ -1,7 +1,8 @@
 import gpiozero
 from time import sleep
+from flask import Flask, redirect, send_from_directory, request
+from datetime import datetime
 
-from gpiozero.internal_devices import CPUTemperature
 
 google = gpiozero.PingServer("google.com")
 
@@ -11,19 +12,18 @@ while True:
     sleep(0.3)
 
 
-from flask import Flask, redirect, send_from_directory, request
-from datetime import datetime
-
 app = Flask(__name__)
 
-import sse, motor, lights
 
-enabled = False
 lightsEnabled = False
-speed = 8
+speed = 0
+sleeping = False
 lastInteraction = datetime.now()
 
 cpu = gpiozero.CPUTemperature()
+
+
+import rotary, display.display as display, illuminatedButton, sse, motor
 
 
 @app.route("/")
@@ -49,24 +49,13 @@ def pingStatus():
 
 def sendStatus():
 
-    if enabled:
-        status = "enabled"
-    else:
-        status = "disabled"
-
     if lightsEnabled:
         ledStatus = "enabled"
     else:
         ledStatus= "disabled"
 
-    msg = sse.format_sse(data="status:" + status + ",speed:" + str(speed) + ",ledStatus:" + ledStatus)
+    msg = sse.format_sse("speed:" + str(speed) + ",ledStatus:" + ledStatus)
     sse.announcer.announce(msg=msg)
-
-
-@app.route("/api/enable", methods=["POST"])
-def enable():
-    changeStatus(request.json["enable"], speed)
-    return "enabled"
 
 
 @app.route("/api/enablelights", methods=["POST"])
@@ -77,24 +66,23 @@ def enableLights():
 
 @app.route("/api/speed", methods=["POST"])
 def setSpeed():
-    changeStatus(enabled, request.json["speed"])
+    changeStatus(request.json["speed"])
     return "changed"
+
 
 @app.route("/api/cpuTemp", methods=["GET"])
 def getCPUTemp():
     return str(int(cpu.temperature)) + " °C"
 
 
-def changeStatus(newState, newSpeed):
-    global enabled, speed, lastInteraction
-    enabled = newState
+def changeStatus(newSpeed):
+    global speed, lastInteraction, rotary
     speed = newSpeed
-    motor.enable(enabled, speed)
+    rotary.rotor.steps = speed
+    motor.enable(speed)
     sendStatus()
     lastInteraction = datetime.now()
-    display.showSpeed()
+    display.displayStatus()
 
-
-import rotary, display, illuminatedButton
 
 app.run(host="0.0.0.0", port=80)
