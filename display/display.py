@@ -1,10 +1,11 @@
 import gpiozero
-import __main__
+import server
 import display.oled as oled
 
 from time import sleep
 from datetime import datetime, timedelta
 from threading import Thread
+from chairlift import motors
 
 rgbLED = gpiozero.RGBLED(21, 20, 16)
 primary = (0, 0, 1)
@@ -17,15 +18,19 @@ showOFF = False
 
 def displayDaemon():
 
-    global __main__, dontWait
+    global dontWait
 
     while True:
 
         now = datetime.now()
-        limitDate = __main__.lastInteraction + timedelta(minutes=2)
+        sleepDate = server.lastInteraction + timedelta(minutes=1)
 
-        if limitDate < now and __main__.speed == 0: 
+        if sleepDate < now and motors.getSpeed() == 0: 
             oled.putToSleep()
+            rgbLED.color = (0, 0, 0)
+
+        if oled.lastReload + timedelta(minutes=1) < now and oled.isSleeping == False:
+            oled.showHomeScreen()
 
         sleep(2)
 
@@ -34,12 +39,14 @@ def displayStatus():
 
     oled.showHomeScreen()
 
-    if not __main__.sleeping:
-        if abs(__main__.speed) < 3:
+    if not server.sleeping:
+        if motors.getSpeed() == 0:
+            rgbLED.color = primary
+        elif abs(motors.getSpeed()) < 3:
             rgbLED.color = danger
-        elif abs(__main__.speed) < 6:
+        elif abs(motors.getSpeed()) < 6:
             rgbLED.color = warning
-        elif abs(__main__.speed) < 10:
+        elif abs(motors.getSpeed()) < 10:
             rgbLED.color = success
         else:
             rgbLED.color = warning

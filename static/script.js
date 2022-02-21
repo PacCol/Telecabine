@@ -1,6 +1,6 @@
 loaderDelay = 7000;
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("body").fadeIn(300);
 });
 
@@ -141,7 +141,7 @@ $("#faster-button").click(function () {
     faster();
 });
 
-$("#emergency").click(function() {
+$("#emergency").click(function () {
     setSpeed(0);
 });
 
@@ -151,39 +151,41 @@ $("#emergency").click(function() {
 /////////////////////////////////////////
 
 $("body").keyup(function (e) {
-    if (e.which == 37) {
-        slower();
-    } else if (e.which == 39) {
-        faster();
-    } else if (e.which == 13 || e.which == 32) {
-        e.preventDefault();
-        setSpeed(0);
-    } else if (e.which == 49) {
-        setSpeed(1);
-    } else if (e.which == 50) {
-        setSpeed(2);
-    } else if (e.which == 51) {
-        setSpeed(3);
-    } else if (e.which == 52) {
-        setSpeed(4);
-    } else if (e.which == 53) {
-        setSpeed(5);
-    } else if (e.which == 54) {
-        setSpeed(6);
-    } else if (e.which == 55) {
-        setSpeed(7);
-    } else if (e.which == 56) {
-        setSpeed(8);
-    } else if (e.which == 57) {
-        setSpeed(9);
-    } else if (e.which == 48) {
-        setSpeed(10);
-    } else if (e.which == 76) {
-        if ($("#lights-toggle input").prop("checked")) {
-            enableLights(false);
-        }
-        else {
-            enableLights(true);
+    if ($("#main").is(":visible")) {
+        if (e.which == 37) {
+            slower();
+        } else if (e.which == 39) {
+            faster();
+        } else if (e.which == 13 || e.which == 32) {
+            e.preventDefault();
+            setSpeed(0);
+        } else if (e.which == 49) {
+            setSpeed(1);
+        } else if (e.which == 50) {
+            setSpeed(2);
+        } else if (e.which == 51) {
+            setSpeed(3);
+        } else if (e.which == 52) {
+            setSpeed(4);
+        } else if (e.which == 53) {
+            setSpeed(5);
+        } else if (e.which == 54) {
+            setSpeed(6);
+        } else if (e.which == 55) {
+            setSpeed(7);
+        } else if (e.which == 56) {
+            setSpeed(8);
+        } else if (e.which == 57) {
+            setSpeed(9);
+        } else if (e.which == 48) {
+            setSpeed(10);
+        } else if (e.which == 76) {
+            if ($("#lights-toggle input").prop("checked")) {
+                enableLights(false);
+            }
+            else {
+                enableLights(true);
+            }
         }
     }
 });
@@ -255,7 +257,7 @@ function setSpeed(requestedSpeed) {
 
     loader(true);
 
-    var start = new Date();  
+    var start = new Date();
 
     $.ajax({
         type: "POST",
@@ -267,8 +269,8 @@ function setSpeed(requestedSpeed) {
             loader(false);
             processingRequest = false;
             end = new Date();
-	        diff = end - start;
-	        diff = new Date(diff);
+            diff = end - start;
+            diff = new Date(diff);
             console.log("TIMING: " + diff.getMilliseconds());
         },
 
@@ -312,7 +314,7 @@ if (localStorage.getItem("bg-img") == "true") {
     $("#bg-img-toggle input").prop("checked", true);
 }
 
-$("#bg-img-toggle input").change(function() {
+$("#bg-img-toggle input").change(function () {
     if (this.checked) {
         $("body").addClass("bg-img");
         $(".settings-item:has(.dark-theme-toggle-switch)").hide();
@@ -325,7 +327,7 @@ $("#bg-img-toggle input").change(function() {
     }
 });
 
-$("#setImg").click(function(e) {
+$("#setImg").click(function (e) {
 
     e.stopPropagation();
 
@@ -386,7 +388,7 @@ $("#cpuTemp").click(askStatusWhenReady);
 //////////// RESET //////////////////////
 /////////////////////////////////////////
 
-$("#reset").click(function() {
+$("#reset").click(function () {
 
     alertBox("Réinitialisation", "Êtes-vous sûr de vouloir réinitialiser les paramètres locaux ?", `
         <button class="btn btn-sp warning ripple-effect cancel" onclick="reset();">Réinitialiser</button>

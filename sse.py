@@ -1,7 +1,4 @@
-from flask import Response
 import queue
-
-from __main__ import app
 
 class MessageAnnouncer:
 
@@ -27,14 +24,3 @@ def format_sse(data: str, event=None) -> str:
     if event is not None:
         msg = f'event: {event}\n{msg}'
     return msg
-
-@app.route('/listen', methods=['GET'])
-def listen():
-
-    def stream():
-        messages = announcer.listen()
-        while True:
-            msg = messages.get()
-            yield msg
-
-    return Response(stream(), mimetype='text/event-stream')

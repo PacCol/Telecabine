@@ -1,29 +1,20 @@
 import gpiozero
 from time import sleep
-from flask import Flask, redirect, send_from_directory, request
+from flask import Flask, redirect, send_from_directory, request, Response
 from datetime import datetime
 
+lastInteraction = datetime.now()
+sleeping = False
 
-google = gpiozero.PingServer("google.com")
-
-while True:
-    if google.is_active:
-        break
-    sleep(0.3)
-
+from chairlift import motors, lights
+import status
+from inputDevices import illuminatedButton, rotary
 
 app = Flask(__name__)
 
-
-lightsEnabled = False
-speed = 0
-sleeping = False
-lastInteraction = datetime.now()
-
 cpu = gpiozero.CPUTemperature()
 
-
-import rotary, display.display as display, illuminatedButton, sse, motor
+import sse
 
 
 @app.route("/")
@@ -41,6 +32,18 @@ def webApp(path):
     return send_from_directory("static", path)
 
 
+@app.route('/listen', methods=['GET'])
+def listen():
+
+    def stream():
+        messages = sse.announcer.listen()
+        while True:
+            msg = messages.get()
+            yield msg
+
+    return Response(stream(), mimetype='text/event-stream')
+
+
 @app.route("/api/status", methods=["POST"])
 def pingStatus():
     sendStatus()
@@ -49,24 +52,24 @@ def pingStatus():
 
 def sendStatus():
 
-    if lightsEnabled:
+    if lights.getStatus():
         ledStatus = "enabled"
     else:
         ledStatus= "disabled"
 
-    msg = sse.format_sse("speed:" + str(speed) + ",ledStatus:" + ledStatus)
+    msg = sse.format_sse("speed:" + str(motors.getSpeed()) + ",ledStatus:" + ledStatus)
     sse.announcer.announce(msg=msg)
 
 
 @app.route("/api/enablelights", methods=["POST"])
 def enableLights():
-    illuminatedButton.changeStatus(request.json["enable"])
+    status.setStatus(None, request.json["enable"])
     return "enabled"
 
 
 @app.route("/api/speed", methods=["POST"])
 def setSpeed():
-    changeStatus(request.json["speed"])
+    status.setStatus(request.json["speed"], None)
     return "changed"
 
 
@@ -75,14 +78,5 @@ def getCPUTemp():
     return str(int(cpu.temperature)) + " °C"
 
 
-def changeStatus(newSpeed):
-    global speed, lastInteraction, rotary
-    speed = newSpeed
-    rotary.rotor.steps = speed
-    motor.enable(speed)
-    sendStatus()
-    lastInteraction = datetime.now()
-    display.displayStatus()
-
-
-app.run(host="0.0.0.0", port=80)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=80)

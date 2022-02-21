@@ -5,7 +5,8 @@ from PIL import ImageFont
 from threading import Thread
 from datetime import datetime
 from time import sleep
-import __main__
+import server
+from chairlift import lights, motors
 
 serial = i2c(port=1, address=0x3c)
 device = sh1106(serial, rotate=0, width=128, height=64)
@@ -21,6 +22,7 @@ bigIcon = ImageFont.truetype(iconPath, 50)
 
 isDisplaying = False
 isSleeping = False
+lastReload = datetime.now()
 
 
 def showHomeScreenWithoutThreading():
@@ -38,7 +40,7 @@ def showHomeScreenWithoutThreading():
 
     with canvas(device) as draw:
 
-        if __main__.lightsEnabled:
+        if lights.getStatus():
             draw.text((0, 0), "\ue518", fill=1, font=icon)
 
         now = datetime.now()
@@ -46,7 +48,7 @@ def showHomeScreenWithoutThreading():
         strLength = font.getsize(time)[0]
         draw.text(((device.width - strLength) / 2, 0), time, fill=1, font=font)
 
-        speed = str(__main__.speed) + "/10"
+        speed = str(motors.getSpeed()) + "/10"
         strLength = bigFont.getsize(speed)[0]
         draw.text(((device.width - strLength) / 2, 16), speed, fill=1, font=bigFont)
 
@@ -61,6 +63,8 @@ def putToSleep():
 
 
 def showHomeScreen():
+    global lastReload
+    lastReload = datetime.now()
     displayThread = Thread(target=showHomeScreenWithoutThreading, args=())
     displayThread.start()
 
@@ -71,4 +75,4 @@ def displayOff():
 
     with canvas(device) as draw:
         iconSize = bigIcon.getsize("\ue646")
-        draw.text(((device.width - iconSize[0]) / 2, 0(device.width - iconSize[1]) / 2), "\ue518", fill=1, font=icon)
+        draw.text(((device.width - iconSize[0]) / 2, (device.height - iconSize[1]) / 2), "\ue646", fill=1, font=bigIcon)
