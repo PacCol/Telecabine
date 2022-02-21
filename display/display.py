@@ -18,8 +18,6 @@ showOFF = False
 
 def displayDaemon():
 
-    global dontWait
-
     while True:
 
         now = datetime.now()
@@ -27,7 +25,7 @@ def displayDaemon():
 
         if sleepDate < now and motors.getSpeed() == 0: 
             oled.putToSleep()
-            rgbLED.color = (0, 0, 0)
+            rgbLED.color = (0, 0, 0.2)
 
         if oled.lastReload + timedelta(minutes=1) < now and oled.isSleeping == False:
             oled.showHomeScreen()
