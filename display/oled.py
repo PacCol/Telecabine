@@ -6,7 +6,7 @@ from threading import Thread
 from datetime import datetime
 from time import sleep
 import server
-from chairlift import lights, motors
+from lift import lights, motors
 
 serial = i2c(port=1, address=0x3c)
 device = sh1106(serial, rotate=0, width=128, height=64)

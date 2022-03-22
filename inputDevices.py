@@ -2,7 +2,7 @@ import gpiozero
 from subprocess import check_call
 from time import sleep
 import status
-from chairlift import lights, motors
+from lift import lights, motors
 import display.display as display
 
 

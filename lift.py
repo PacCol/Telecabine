@@ -1,4 +1,5 @@
 import RPi.GPIO as GPIO
+from datetime import datetime
 
 
 class Lights:
@@ -25,6 +26,7 @@ class Lights:
 class Motors():
     
     def __init__(self, backwardAllowed):
+        self.startTime = datetime.now()
         self.speedPin = 6
         self.activationPin = 13
         self.reversePin = 12
@@ -38,11 +40,17 @@ class Motors():
         self.backwardAllowed = backwardAllowed
 
     def setSpeed(self, speed):
+        if self.speed == 0:
+            self.startTime = datetime.now()
         self.speed = speed
         self.speedPWM.start(abs(self.speed) * 10)
         if self.speed < 0 and self.backwardAllowed:
             GPIO.output(self.activationPin, False)
             GPIO.output(self.reversePin, True)
+        elif self.speed < 0 and not self.backwardAllowed:
+            self.speed = 0
+            GPIO.output(self.activationPin, False)
+            GPIO.output(self.reversePin, False)
         elif self.speed > 0:
             GPIO.output(self.activationPin, True)
             GPIO.output(self.reversePin, False)
@@ -55,6 +63,9 @@ class Motors():
 
     def isBackwardAllowed(self):
         return self.backwardAllowed
+
+    def getStartTime(self):
+        return self.startTime
 
 
 lights = Lights()

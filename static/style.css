@@ -56,6 +56,10 @@ body.bg-img .table-container {
     float: left;
 }
 
+.backward-forbidden #backward {
+    display: none;
+}
+
 #backward-progress {
     float: right;
 }
@@ -63,6 +67,10 @@ body.bg-img .table-container {
 #forward {
     width: 50%;
     float: right;
+}
+
+.backward-forbidden #forward {
+    width: 100%;
 }
 
 #emergency {

@@ -6,7 +6,7 @@ from datetime import datetime
 lastInteraction = datetime.now()
 sleeping = False
 
-from chairlift import motors, lights
+from lift import motors, lights
 import status
 from inputDevices import illuminatedButton, rotary
 
@@ -57,7 +57,7 @@ def sendStatus():
     else:
         ledStatus= "disabled"
 
-    msg = sse.format_sse("speed:" + str(motors.getSpeed()) + ",ledStatus:" + ledStatus)
+    msg = sse.format_sse("speed=" + str(motors.getSpeed()) + ",ledStatus=" + ledStatus + ",startTime=" + str(motors.getStartTime()))
     sse.announcer.announce(msg=msg)
 
 

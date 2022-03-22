@@ -5,7 +5,7 @@ import display.oled as oled
 from time import sleep
 from datetime import datetime, timedelta
 from threading import Thread
-from chairlift import motors
+from lift import motors
 
 rgbLED = gpiozero.RGBLED(21, 20, 16)
 primary = (0, 0, 1)

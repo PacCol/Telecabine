@@ -73,15 +73,19 @@ function askStatus() {
     });
 }
 
+var killChrono = false;
+
 source.onmessage = function (msg) {
 
-    var speed = parseInt(msg.data.split(":")[1]);
-    var lightsStatus = msg.data.split(":")[2];
+    var speed = parseInt(msg.data.split("=")[1]);
+    var lightsStatus = msg.data.split("=")[2];
+    var startTime = new Date(msg.data.split("=")[3]);
 
     $(".alert-shadow").fadeOut(300);
     //console.log(msg.data);
     //console.log(speed);
     //console.log(lightsStatus);
+    //console.log(startTime);
 
     if (lightsStatus == "enabled") {
         $("#lights-toggle input").prop("checked", true);
@@ -98,6 +102,29 @@ source.onmessage = function (msg) {
     } else {
         displaySpeed("#backward-progress", speed);
         displaySpeed("#forward-progress", speed);
+    }
+
+    if (speed == 0) {
+        killChrono = true;
+        $("#status").text("À l'arrêt");
+        $("#emergency").prop("disabled", true);
+    } else {
+        killChrono = false;
+        $("#emergency").prop("disabled", false);
+
+        displayRunningTime();
+
+        function displayRunningTime() {
+            if (killChrono) {
+                alert("gg");
+                killChrono = false;
+            } else {
+                var now = new Date();
+                var timeRunning = now - startTime;
+                $("#status").text("En marche depuis " + (timeRunning / 1000).toString());
+                setTimeout(displayRunningTime, 950);
+            }
+        }
     }
 }
 

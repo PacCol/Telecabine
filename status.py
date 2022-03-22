@@ -1,6 +1,6 @@
 from datetime import datetime
 import server
-from chairlift import lights, motors
+from lift import lights, motors
 from inputDevices import rotary
 import display.display as display
 
