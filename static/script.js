@@ -73,7 +73,7 @@ function askStatus() {
     });
 }
 
-var killChrono = false;
+var chronoInterval = null;
 
 source.onmessage = function(msg) {
 
