@@ -1,6 +1,6 @@
 body {
     user-select: none;
-    --img-url: url("http://media.sit.savoie-mont-blanc.com/original/875197/0-1777285.jpg");
+    --img-url: url("http://media.sit.savoie-mont-blanc.com/original/82743/0-2567245.jpg");
 }
 
 body.bg-img {
@@ -46,8 +46,8 @@ body.bg-img .table-container {
     justify-content: space-between;
 }
 
-#speed-selector-container > .btn,
-#speed-selector > .btn {
+#speed-selector-container>.btn,
+#speed-selector>.btn {
     margin: 0px;
 }
 

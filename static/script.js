@@ -1,6 +1,6 @@
 loaderDelay = 7000;
 
-$(document).ready(function () {
+$(document).ready(function() {
     $("body").fadeIn(300);
 });
 
@@ -8,17 +8,17 @@ $(document).ready(function () {
 //////////// TWO SECTIONS ///////////////
 /////////////////////////////////////////
 
-$("#settings-button").click(function () {
+$("#settings-button").click(function() {
     $("#settings-button").fadeOut(150);
-    $("#main").fadeOut(150).promise().done(function () {
+    $("#main").fadeOut(150).promise().done(function() {
         $("#settings").fadeIn(150);
         $("#home-button").fadeIn(150);
     });
 });
 
-$("#home-button").click(function () {
+$("#home-button").click(function() {
     $("#home-button").fadeOut(150);
-    $("#settings").fadeOut(150).promise().done(function () {
+    $("#settings").fadeOut(150).promise().done(function() {
         $("#main").fadeIn(150);
         $("#settings-button").fadeIn(150);
     });
@@ -60,11 +60,11 @@ function askStatus() {
         type: "POST",
         url: "/api/status",
 
-        success: function () {
+        success: function() {
             loader(false);
         },
 
-        error: function () {
+        error: function() {
             loader(false);
             networkError();
         },
@@ -75,17 +75,13 @@ function askStatus() {
 
 var killChrono = false;
 
-source.onmessage = function (msg) {
+source.onmessage = function(msg) {
 
-    var speed = parseInt(msg.data.split("=")[1]);
-    var lightsStatus = msg.data.split("=")[2];
+    var speed = parseInt(msg.data.split("=")[1].split(",")[0]);
+    var lightsStatus = msg.data.split("=")[2].split(",")[0];
     var startTime = new Date(msg.data.split("=")[3]);
 
     $(".alert-shadow").fadeOut(300);
-    //console.log(msg.data);
-    //console.log(speed);
-    //console.log(lightsStatus);
-    //console.log(startTime);
 
     if (lightsStatus == "enabled") {
         $("#lights-toggle input").prop("checked", true);
@@ -105,30 +101,33 @@ source.onmessage = function (msg) {
     }
 
     if (speed == 0) {
-        killChrono = true;
+        clearInterval(chronoInterval);
+        chronoInterval = null;
         $("#status").text("À l'arrêt");
         $("#emergency").prop("disabled", true);
     } else {
-        killChrono = false;
         $("#emergency").prop("disabled", false);
 
         displayRunningTime();
 
+        if (!chronoInterval) {
+            chronoInterval = setInterval(displayRunningTime, 1000);
+        }
+
         function displayRunningTime() {
-            if (killChrono) {
-                alert("gg");
-                killChrono = false;
-            } else {
-                var now = new Date();
-                var timeRunning = now - startTime;
-                $("#status").text("En marche depuis " + (timeRunning / 1000).toString());
-                setTimeout(displayRunningTime, 950);
-            }
+            var now = new Date();
+            var timeRunning = now - startTime;
+            var hours = Math.trunc(timeRunning / (1000 * 60 * 60));
+            timeRunning = timeRunning - hours * 60 * 60 * 1000;
+            var minutes = Math.trunc(timeRunning / (1000 * 60));
+            timeRunning = timeRunning - minutes * 60 * 1000;
+            var seconds = Math.trunc(timeRunning / 1000);
+            $("#status").text("En marche depuis " + hours.toString() + ":" + minutes.toString() + ":" + seconds.toString());
         }
     }
 }
 
-source.onerror = function () {
+source.onerror = function() {
     networkError();
 }
 
@@ -137,38 +136,36 @@ source.onerror = function () {
 //////////// BUTTONS, TOGGLES ///////////
 /////////////////////////////////////////
 
-$("#gondola-toggle input").change(function () {
+$("#gondola-toggle input").change(function() {
     if (this.checked) {
         changeState(true);
-    }
-    else {
+    } else {
         changeState(false);
     }
 });
 
-$("#lights-toggle input").change(function () {
+$("#lights-toggle input").change(function() {
     if (this.checked) {
         enableLights(true);
-    }
-    else {
+    } else {
         enableLights(false);
     }
 });
 
-$("#slower-button").click(function () {
+$("#slower-button").click(function() {
     slower();
 });
 
-$("#speed-selector .dropdown-content .btn").click(function () {
+$("#speed-selector .dropdown-content .btn").click(function() {
     var requestedSpeed = parseInt($(this).data("value"));
     setSpeed(requestedSpeed);
 });
 
-$("#faster-button").click(function () {
+$("#faster-button").click(function() {
     faster();
 });
 
-$("#emergency").click(function () {
+$("#emergency").click(function() {
     setSpeed(0);
 });
 
@@ -177,7 +174,7 @@ $("#emergency").click(function () {
 //////////// KEYBOARD SHORTCUTS /////////
 /////////////////////////////////////////
 
-$("body").keyup(function (e) {
+$("body").keyup(function(e) {
     if ($("#main").is(":visible")) {
         if (e.which == 37) {
             slower();
@@ -209,8 +206,7 @@ $("body").keyup(function (e) {
         } else if (e.which == 76) {
             if ($("#lights-toggle input").prop("checked")) {
                 enableLights(false);
-            }
-            else {
+            } else {
                 enableLights(true);
             }
         }
@@ -240,12 +236,12 @@ function enableLights(wantToEnable) {
         data: JSON.stringify({ enable: wantToEnable }),
         contentType: "application/json",
 
-        success: function () {
+        success: function() {
             loader(false);
             processingRequest = false;
         },
 
-        error: function () {
+        error: function() {
             loader(false);
             processingRequest = false;
             networkError();
@@ -292,7 +288,7 @@ function setSpeed(requestedSpeed) {
         data: JSON.stringify({ speed: requestedSpeed }),
         contentType: "application/json",
 
-        success: function () {
+        success: function() {
             loader(false);
             processingRequest = false;
             end = new Date();
@@ -301,7 +297,7 @@ function setSpeed(requestedSpeed) {
             console.log("TIMING: " + diff.getMilliseconds());
         },
 
-        error: function () {
+        error: function() {
             loader(false);
             processingRequest = false;
             networkError();
@@ -341,7 +337,7 @@ if (localStorage.getItem("bg-img") == "true") {
     $("#bg-img-toggle input").prop("checked", true);
 }
 
-$("#bg-img-toggle input").change(function () {
+$("#bg-img-toggle input").change(function() {
     if (this.checked) {
         $("body").addClass("bg-img");
         $(".settings-item:has(.dark-theme-toggle-switch)").hide();
@@ -354,7 +350,7 @@ $("#bg-img-toggle input").change(function () {
     }
 });
 
-$("#setImg").click(function (e) {
+$("#setImg").click(function(e) {
 
     e.stopPropagation();
 
@@ -392,12 +388,12 @@ function showCPUTemp() {
         type: "GET",
         url: "/api/cpuTemp",
 
-        success: function (response) {
+        success: function(response) {
             loader(false);
             $("#cpuTemp-indic").text("Température du CPU: " + response);
         },
 
-        error: function () {
+        error: function() {
             loader(false);
             networkError();
         },
@@ -415,7 +411,7 @@ $("#cpuTemp").click(askStatusWhenReady);
 //////////// RESET //////////////////////
 /////////////////////////////////////////
 
-$("#reset").click(function () {
+$("#reset").click(function() {
 
     alertBox("Réinitialisation", "Êtes-vous sûr de vouloir réinitialiser les paramètres locaux ?", `
         <button class="btn btn-sp warning ripple-effect cancel" onclick="reset();">Réinitialiser</button>

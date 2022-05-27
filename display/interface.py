@@ -1,12 +1,17 @@
-from luma.core.interface.serial import i2c
-from luma.oled.device import sh1106
-from luma.core.render import canvas
+from emulator import emulator
+
+if emulator:
+    from emulator import i2c, sh1106, canvas
+else:
+    from luma.core.interface.serial import i2c
+    from luma.oled.device import sh1106
+    from luma.core.render import canvas
+
 from PIL import ImageFont
 from threading import Thread
 from datetime import datetime
 from time import sleep
-import server
-from lift import lights, motors
+from hardware import *
 
 serial = i2c(port=1, address=0x3c)
 device = sh1106(serial, rotate=0, width=128, height=64)

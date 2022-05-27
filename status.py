@@ -1,9 +1,7 @@
 from datetime import datetime
 import server
-from lift import lights, motors
-from inputDevices import rotary
+import hardware
 import display.display as display
-
 
 def setStatus(speed, lightsEnabled):
 
@@ -11,12 +9,12 @@ def setStatus(speed, lightsEnabled):
     server.lastInteraction = datetime.now()
 
     if speed != None:
-        rotary.rotor.steps = speed
-        motors.setSpeed(speed)
+        hardware.rotary.rotor.steps = speed
+        hardware.motors.setSpeed(speed)
         display.displayStatus()
         server.sendStatus()
 
     if lightsEnabled != None:
-        lights.enable(lightsEnabled)
+        hardware.lights.enable(lightsEnabled)
         display.displayStatus()
         server.sendStatus()

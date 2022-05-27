@@ -1,14 +1,17 @@
-import gpiozero
-from time import sleep
 from flask import Flask, redirect, send_from_directory, request, Response
 from datetime import datetime
 
+from emulator import emulator
 lastInteraction = datetime.now()
 sleeping = False
 
-from lift import motors, lights
+if emulator:
+    from emulator import gpiozero
+else:
+    import gpiozero
+
+import hardware
 import status
-from inputDevices import illuminatedButton, rotary
 
 app = Flask(__name__)
 
@@ -52,12 +55,12 @@ def pingStatus():
 
 def sendStatus():
 
-    if lights.getStatus():
+    if hardware.lights.getStatus():
         ledStatus = "enabled"
     else:
         ledStatus= "disabled"
 
-    msg = sse.format_sse("speed=" + str(motors.getSpeed()) + ",ledStatus=" + ledStatus + ",startTime=" + str(motors.getStartTime()))
+    msg = sse.format_sse("speed=" + str(hardware.motors.getSpeed()) + ",ledStatus=" + ledStatus + ",startTime=" + str(hardware.motors.getStartTime()))
     sse.announcer.announce(msg=msg)
 
 

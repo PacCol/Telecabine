@@ -1,11 +1,17 @@
-import gpiozero
+from emulator import emulator
+
+if emulator:
+    from emulator import gpiozero
+else:
+    import gpiozero
+
 import server
-import display.oled as oled
+import display.interface as interface
 
 from time import sleep
 from datetime import datetime, timedelta
 from threading import Thread
-from lift import motors
+from hardware import *
 
 rgbLED = gpiozero.RGBLED(21, 20, 16)
 primary = (0, 0, 1)
@@ -24,18 +30,18 @@ def displayDaemon():
         sleepDate = server.lastInteraction + timedelta(minutes=1)
 
         if sleepDate < now and motors.getSpeed() == 0: 
-            oled.putToSleep()
+            interface.putToSleep()
             rgbLED.color = (0, 0, 0.2)
 
-        if oled.lastReload + timedelta(minutes=1) < now and oled.isSleeping == False:
-            oled.showHomeScreen()
+        if interface.lastReload + timedelta(minutes=1) < now and interface.isSleeping == False:
+            interface.showHomeScreen()
 
         sleep(2)
 
 
 def displayStatus():
 
-    oled.showHomeScreen()
+    interface.showHomeScreen()
 
     if not server.sleeping:
         if motors.getSpeed() == 0:
@@ -51,7 +57,7 @@ def displayStatus():
 
 
 def displayOFF():
-    oled.displayOff()
+    interface.displayOff()
 
 
 displayStatus()
