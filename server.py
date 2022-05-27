@@ -2,6 +2,7 @@ from flask import Flask, redirect, send_from_directory, request, Response
 from datetime import datetime
 
 from emulator import emulator
+
 lastInteraction = datetime.now()
 sleeping = False
 
@@ -11,7 +12,7 @@ else:
     import gpiozero
 
 import hardware
-import status
+import output
 
 app = Flask(__name__)
 
@@ -66,13 +67,13 @@ def sendStatus():
 
 @app.route("/api/enablelights", methods=["POST"])
 def enableLights():
-    status.setStatus(None, request.json["enable"])
+    output.setOutput(None, request.json["enable"])
     return "enabled"
 
 
 @app.route("/api/speed", methods=["POST"])
 def setSpeed():
-    status.setStatus(request.json["speed"], None)
+    output.setOutput(request.json["speed"], None)
     return "changed"
 
 

@@ -51,28 +51,6 @@ body.bg-img .table-container {
     margin: 0px;
 }
 
-#backward {
-    width: 50%;
-    float: left;
-}
-
-.backward-forbidden #backward {
-    display: none;
-}
-
-#backward-progress {
-    float: right;
-}
-
-#forward {
-    width: 50%;
-    float: right;
-}
-
-.backward-forbidden #forward {
-    width: 100%;
-}
-
 #emergency {
     width: fit-content;
     margin-left: auto;

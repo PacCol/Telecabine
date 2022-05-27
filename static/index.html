@@ -81,13 +81,8 @@
 
                 </div>
 
-                <div class="progress-bar backward-forbidden">
-                    <div id="backward">
-                        <div class="progress" id="backward-progress"></div>
-                    </div>
-                    <div id="forward">
-                        <div class="progress" id="forward-progress"></div>
-                    </div>
+                <div class="progress-bar">
+                    <div class="progress" id="progress"></div>
                 </div>
 
                 <h3>Lumières</h3>
@@ -105,19 +100,7 @@
                 <div class="control">
                     <h1>Paramètres</h1>
                 </div>
-
-                <h3 style="display: none;">Moteurs</h3>
-
-                <div class="settings-item ripple-effect" style="display: none;">
-                    <p>Marche arrière</p>
-                    <label class="toggle-switch warning" id="backward-toggle">
-                        <input type="checkbox">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-
-                <p style="display: none;">Par mesure de sécurité, cette option se désactive à chaque redémarrage.</p>
-
+                
                 <h3>Personnalisation</h3>
 
                 <div class="settings-item">
@@ -143,6 +126,11 @@
                 </div>
 
                 <h3>Hardware</h3>
+
+                <div class="settings-item">
+                    <p id="alim-indic">Type d'alimentation</p>
+                    <i class="material-icons-round" id="alim">settings</i>
+                </div>
 
                 <div class="settings-item">
                     <p id="cpuTemp-indic">Température du CPU: -</p>

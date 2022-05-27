@@ -19,7 +19,7 @@ device.contrast(240)
 
 fontPath = "display/montserrat400.ttf"
 font = ImageFont.truetype(fontPath, 10)
-bigFont = ImageFont.truetype(fontPath, 34)
+bigFont = ImageFont.truetype(fontPath, 32)
 
 iconPath = "display/material-design-icons-round.ttf"
 icon = ImageFont.truetype(iconPath, 12)
@@ -56,6 +56,8 @@ def showHomeScreenWithoutThreading():
         speed = str(motors.getSpeed()) + "/10"
         strLength = bigFont.getsize(speed)[0]
         draw.text(((device.width - strLength) / 2, 16), speed, fill=1, font=bigFont)
+
+        draw.rectangle((0, device.height - 2, int((motors.getSpeed() / 10) * device.width), device.height), outline=0, fill=1)
 
     isDisplaying = False
 

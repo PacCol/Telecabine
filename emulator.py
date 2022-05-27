@@ -1,6 +1,6 @@
 # A class to emulate the Raspberry Pi GPIO module
 
-emulator = True
+emulator = False
 
 class GPIO:
 

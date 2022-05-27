@@ -1,6 +1,6 @@
 loaderDelay = 7000;
 
-$(document).ready(function() {
+$(document).ready(function () {
     $("body").fadeIn(300);
 });
 
@@ -8,17 +8,17 @@ $(document).ready(function() {
 //////////// TWO SECTIONS ///////////////
 /////////////////////////////////////////
 
-$("#settings-button").click(function() {
+$("#settings-button").click(function () {
     $("#settings-button").fadeOut(150);
-    $("#main").fadeOut(150).promise().done(function() {
+    $("#main").fadeOut(150).promise().done(function () {
         $("#settings").fadeIn(150);
         $("#home-button").fadeIn(150);
     });
 });
 
-$("#home-button").click(function() {
+$("#home-button").click(function () {
     $("#home-button").fadeOut(150);
-    $("#settings").fadeOut(150).promise().done(function() {
+    $("#settings").fadeOut(150).promise().done(function () {
         $("#main").fadeIn(150);
         $("#settings-button").fadeIn(150);
     });
@@ -46,9 +46,9 @@ askStatusWhenReady();
 
 function askStatusWhenReady() {
     if (source.readyState) {
-        askStatus
+        askStatus();
     } else {
-        setTimeout(askStatus, 200);
+        setTimeout(askStatusWhenReady, 200);
     }
 }
 
@@ -60,11 +60,11 @@ function askStatus() {
         type: "POST",
         url: "/api/status",
 
-        success: function() {
+        success: function () {
             loader(false);
         },
 
-        error: function() {
+        error: function () {
             loader(false);
             networkError();
         },
@@ -75,7 +75,7 @@ function askStatus() {
 
 var chronoInterval = null;
 
-source.onmessage = function(msg) {
+source.onmessage = function (msg) {
 
     var speed = parseInt(msg.data.split("=")[1].split(",")[0]);
     var lightsStatus = msg.data.split("=")[2].split(",")[0];
@@ -89,16 +89,7 @@ source.onmessage = function(msg) {
         $("#lights-toggle input").prop("checked", false);
     }
 
-    if (speed < 0) {
-        displaySpeed("#backward-progress", speed);
-        $("#forward-progress").css("width", "0px");
-    } else if (speed > 0) {
-        displaySpeed("#forward-progress", speed);
-        $("#backward-progress").css("width", "0px");
-    } else {
-        displaySpeed("#backward-progress", speed);
-        displaySpeed("#forward-progress", speed);
-    }
+    displaySpeed("#progress", speed);
 
     if (speed == 0) {
         clearInterval(chronoInterval);
@@ -127,7 +118,7 @@ source.onmessage = function(msg) {
     }
 }
 
-source.onerror = function() {
+source.onerror = function () {
     networkError();
 }
 
@@ -136,7 +127,7 @@ source.onerror = function() {
 //////////// BUTTONS, TOGGLES ///////////
 /////////////////////////////////////////
 
-$("#gondola-toggle input").change(function() {
+$("#gondola-toggle input").change(function () {
     if (this.checked) {
         changeState(true);
     } else {
@@ -144,7 +135,7 @@ $("#gondola-toggle input").change(function() {
     }
 });
 
-$("#lights-toggle input").change(function() {
+$("#lights-toggle input").change(function () {
     if (this.checked) {
         enableLights(true);
     } else {
@@ -152,20 +143,20 @@ $("#lights-toggle input").change(function() {
     }
 });
 
-$("#slower-button").click(function() {
+$("#slower-button").click(function () {
     slower();
 });
 
-$("#speed-selector .dropdown-content .btn").click(function() {
+$("#speed-selector .dropdown-content .btn").click(function () {
     var requestedSpeed = parseInt($(this).data("value"));
     setSpeed(requestedSpeed);
 });
 
-$("#faster-button").click(function() {
+$("#faster-button").click(function () {
     faster();
 });
 
-$("#emergency").click(function() {
+$("#emergency").click(function () {
     setSpeed(0);
 });
 
@@ -174,7 +165,7 @@ $("#emergency").click(function() {
 //////////// KEYBOARD SHORTCUTS /////////
 /////////////////////////////////////////
 
-$("body").keyup(function(e) {
+$("body").keyup(function (e) {
     if ($("#main").is(":visible")) {
         if (e.which == 37) {
             slower();
@@ -236,12 +227,12 @@ function enableLights(wantToEnable) {
         data: JSON.stringify({ enable: wantToEnable }),
         contentType: "application/json",
 
-        success: function() {
+        success: function () {
             loader(false);
             processingRequest = false;
         },
 
-        error: function() {
+        error: function () {
             loader(false);
             processingRequest = false;
             networkError();
@@ -280,7 +271,7 @@ function setSpeed(requestedSpeed) {
 
     loader(true);
 
-    var start = new Date();
+    //var start = new Date();
 
     $.ajax({
         type: "POST",
@@ -288,16 +279,16 @@ function setSpeed(requestedSpeed) {
         data: JSON.stringify({ speed: requestedSpeed }),
         contentType: "application/json",
 
-        success: function() {
+        success: function () {
             loader(false);
             processingRequest = false;
-            end = new Date();
+            /*end = new Date();
             diff = end - start;
             diff = new Date(diff);
-            console.log("TIMING: " + diff.getMilliseconds());
+            console.log("TIMING: " + diff.getMilliseconds());*/
         },
 
-        error: function() {
+        error: function () {
             loader(false);
             processingRequest = false;
             networkError();
@@ -315,14 +306,14 @@ function displaySpeed(progress, speed) {
     $(progress).closest(".progress-bar").removeClass("warning");
     $(progress).closest(".progress-bar").removeClass("danger");
 
-    if (Math.abs(speed) < 3) {
+    if (speed < 3) {
         $(progress).closest(".progress-bar").addClass("danger");
-    } else if (Math.abs(speed) == 10 || Math.abs(speed) < 6) {
+    } else if (speed == 10 || speed < 6) {
         $(progress).closest(".progress-bar").addClass("warning");
     } else {
         $(progress).closest(".progress-bar").addClass("success");
     }
-    $(progress).css("width", Math.abs(speed) * 10 + "%");
+    $(progress).css("width", speed * 10 + "%");
 }
 
 
@@ -337,7 +328,7 @@ if (localStorage.getItem("bg-img") == "true") {
     $("#bg-img-toggle input").prop("checked", true);
 }
 
-$("#bg-img-toggle input").change(function() {
+$("#bg-img-toggle input").change(function () {
     if (this.checked) {
         $("body").addClass("bg-img");
         $(".settings-item:has(.dark-theme-toggle-switch)").hide();
@@ -350,7 +341,7 @@ $("#bg-img-toggle input").change(function() {
     }
 });
 
-$("#setImg").click(function(e) {
+$("#setImg").click(function (e) {
 
     e.stopPropagation();
 
@@ -377,6 +368,19 @@ function setImg() {
 
 
 /////////////////////////////////////////
+//////////// ALIM ///////////////////////
+/////////////////////////////////////////
+
+$("#alim").click(function () {
+
+    alertBox("Mode d'alimentation", "Renseignez ici le type d'alimentation utilisé.", `
+        <button class="btn btn-sp warning ripple-effect cancel" onclick="changeAlimMode(12);">12V</button>
+        <button class="btn btn-sp warning ripple-effect cancel" onclick="changeAlimMode(9);">9V</button>
+        <button class="btn btn-lt warning btn-align-right ripple-effect cancel">Fermer</button>`);
+});
+
+
+/////////////////////////////////////////
 //////////// CPU TEMP ///////////////////
 /////////////////////////////////////////
 
@@ -388,12 +392,12 @@ function showCPUTemp() {
         type: "GET",
         url: "/api/cpuTemp",
 
-        success: function(response) {
+        success: function (response) {
             loader(false);
             $("#cpuTemp-indic").text("Température du CPU: " + response);
         },
 
-        error: function() {
+        error: function () {
             loader(false);
             networkError();
         },
@@ -404,14 +408,14 @@ function showCPUTemp() {
 
 showCPUTemp();
 
-$("#cpuTemp").click(askStatusWhenReady);
+$("#cpuTemp").click(showCPUTemp);
 
 
 /////////////////////////////////////////
 //////////// RESET //////////////////////
 /////////////////////////////////////////
 
-$("#reset").click(function() {
+$("#reset").click(function () {
 
     alertBox("Réinitialisation", "Êtes-vous sûr de vouloir réinitialiser les paramètres locaux ?", `
         <button class="btn btn-sp warning ripple-effect cancel" onclick="reset();">Réinitialiser</button>

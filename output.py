@@ -3,7 +3,7 @@ import server
 import hardware
 import display.display as display
 
-def setStatus(speed, lightsEnabled):
+def setOutput(speed, lightsEnabled):
 
     global server
     server.lastInteraction = datetime.now()
@@ -11,10 +11,10 @@ def setStatus(speed, lightsEnabled):
     if speed != None:
         hardware.rotary.rotor.steps = speed
         hardware.motors.setSpeed(speed)
-        display.displayStatus()
-        server.sendStatus()
 
     if lightsEnabled != None:
         hardware.lights.enable(lightsEnabled)
-        display.displayStatus()
-        server.sendStatus()
+        hardware.illuminatedButton.showLightsEnabled(lightsEnabled)
+    
+    display.displayStatus()    
+    server.sendStatus()
