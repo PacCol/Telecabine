@@ -368,19 +368,6 @@ function setImg() {
 
 
 /////////////////////////////////////////
-//////////// ALIM ///////////////////////
-/////////////////////////////////////////
-
-$("#alim").click(function () {
-
-    alertBox("Mode d'alimentation", "Renseignez ici le type d'alimentation utilisé.", `
-        <button class="btn btn-sp warning ripple-effect cancel" onclick="changeAlimMode(12);">12V</button>
-        <button class="btn btn-sp warning ripple-effect cancel" onclick="changeAlimMode(9);">9V</button>
-        <button class="btn btn-lt warning btn-align-right ripple-effect cancel">Fermer</button>`);
-});
-
-
-/////////////////////////////////////////
 //////////// CPU TEMP ///////////////////
 /////////////////////////////////////////
 
