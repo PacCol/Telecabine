@@ -107,7 +107,7 @@ source.onmessage = function(msg) {
             var minutes = Math.trunc(timeRunning / (1000 * 60));
             timeRunning = timeRunning - minutes * 60 * 1000;
             var seconds = Math.trunc(timeRunning / 1000);
-            $("#status").text("En marche depuis " + hours.toString() + ":" + minutes.toString() + ":" + seconds.toString());
+            $("#status").text("En marche depuis " + ("0" + hours.toString()).slice(-2) + ":" + ("0" + minutes.toString()).slice(-2) + ":" + ("0" + seconds.toString()).slice(-2));
         }
     }
 }
@@ -317,27 +317,30 @@ function displaySpeed(progress, speed) {
 
 if (localStorage.getItem("bg-img") == "true") {
     $("body").addClass("bg-img");
-    $(".settings-item:has(.dark-theme-toggle-switch)").hide();
     enableDarkTheme(true);
+    enableAutoDarkTheme(false);
     $("#bg-img-toggle input").prop("checked", true);
+    $(".settings-item:has(.dark-theme-toggle-switch)").addClass("disabled");
+    $(".settings-item:has(.auto-dark-theme-toggle-switch)").addClass("disabled");
 }
 
 $("#bg-img-toggle input").change(function() {
     if (this.checked) {
         $("body").addClass("bg-img");
-        $(".settings-item:has(.dark-theme-toggle-switch)").hide();
         enableDarkTheme(true);
+        enableAutoDarkTheme(false);
         localStorage.setItem("bg-img", "true");
+        $(".settings-item:has(.dark-theme-toggle-switch)").addClass("disabled");
+        $(".settings-item:has(.auto-dark-theme-toggle-switch)").addClass("disabled");
     } else {
         $("body").removeClass("bg-img");
-        $(".settings-item:has(.dark-theme-toggle-switch)").show();
         localStorage.setItem("bg-img", "false");
+        $(".settings-item:has(.dark-theme-toggle-switch)").removeClass("disabled");
+        $(".settings-item:has(.auto-dark-theme-toggle-switch)").removeClass("disabled");
     }
 });
 
 $("#setImg").click(function(e) {
-
-    e.stopPropagation();
 
     alertBox("Définir l'image d'arrière-plan", "", `
         <div class="modern-input primary">

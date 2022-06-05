@@ -3,31 +3,34 @@ body {
     --img-url: url("http://media.sit.savoie-mont-blanc.com/original/82743/0-2567245.jpg");
 }
 
-body.bg-img {
+.bg-img {
     background-image: var(--img-url);
     background-color: unset;
     background-size: cover;
 }
 
-body.bg-img h1,
-body.bg-img h3,
-body.bg-img p {
+.bg-img .navbar h3,
+.bg-img .navbar>i,
+.bg-img .app>div>h1,
+.bg-img .app>div>h3,
+.bg-img .app>div>p {
     text-shadow: 0 0 2px #000000;
+    color: var(--main-color);
 }
 
-body.bg-img .navbar {
+.bg-img .navbar {
     background-color: transparent;
 }
 
-body.bg-img .settings-item {
+.bg-img .settings-item {
     background-color: #3c3e42de;
 }
 
-body.bg-img .progress-bar {
+.bg-img .progress-bar {
     opacity: 0.8;
 }
 
-body.bg-img .table-container {
+.bg-img .table-container {
     background-color: #3c3e4280;
 }
 
@@ -55,4 +58,8 @@ body.bg-img .table-container {
     width: fit-content;
     margin-left: auto;
     font-size: 13px;
+}
+
+.bg-img .settings-item.disabled {
+    opacity: 0.65;
 }
