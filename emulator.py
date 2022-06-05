@@ -1,6 +1,6 @@
 # A class to emulate the Raspberry Pi GPIO module
 
-emulator = False
+emulator = True
 
 class GPIO:
 
@@ -76,6 +76,9 @@ class sh1106:
         pass
 
     def contrast(self, something):
+        pass
+
+    def show(self):
         pass
 
     def hide(self):
