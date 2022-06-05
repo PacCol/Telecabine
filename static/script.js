@@ -243,7 +243,7 @@ function enableLights(wantToEnable) {
 
 function slower() {
     var actualSpeed = parseInt($("#speed-selector .btn-badge").text());
-    if (actualSpeed != -10) {
+    if (actualSpeed != 0) {
         setSpeed(actualSpeed - 1);
     }
 }

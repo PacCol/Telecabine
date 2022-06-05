@@ -16,7 +16,7 @@ body.bg-img p {
 }
 
 body.bg-img .navbar {
-    background-color: unset;
+    background-color: transparent;
 }
 
 body.bg-img .settings-item {
