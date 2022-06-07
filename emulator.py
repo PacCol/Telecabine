@@ -91,7 +91,19 @@ class canvas(object):
         pass
 
     def __enter__(self):
+        return draw()
+
+    def __exit__(self, something, something1, something2):
         pass
 
-    def __exit__(self, type, value, traceback):
+
+class draw():
+
+    def __init__(self):
+        pass
+
+    def text(self, something, something1, fill, font):
+        pass
+
+    def rectangle(self, something, outline, fill):
         pass
