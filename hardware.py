@@ -7,9 +7,13 @@ else:
     import gpiozero
     import RPi.GPIO as GPIO
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from subprocess import check_call
 from time import sleep
+from threading import Thread
+
+import display.display as display
+from status import *
 
 alimentation = "12v"
 
@@ -28,9 +32,9 @@ class illuminatedPushButton():
 
         def toggleStatus():
             if lights.getStatus():
-                output.setOutput(None, False)
+                setOutput(None, False)
             else:
-                output.setOutput(None, True)
+                setOutput(None, True)
             sleep(0.4)
 
         def shutdown():
@@ -59,11 +63,11 @@ class rotaryEncoder():
     def setMotorsSpeed(self):
         if self.rotor.steps < 0:
             self.rotor.steps = 0
-        output.setOutput(self.rotor.steps, None)
+        setOutput(self.rotor.steps, None)
         sleep(0.05)
 
     def stopMotors(self):
-        output.setOutput(0, None)
+        setOutput(0, None)
 
 
 class Lights:
@@ -114,7 +118,7 @@ class Motors():
         if alimentation == "9v":
             self.speedPWM.start(self.speed * 10)
         else:
-            self.speedPWM.start(int(self.speed * 10 * 0.8))
+            self.speedPWM.start(int(self.speed * 10 * 0.9))
         if self.speed > 0:
             GPIO.output(self.activationPin, True)
             GPIO.output(self.reversePin, False)
@@ -126,11 +130,68 @@ class Motors():
         return self.startTime
 
 
+rgbLED = gpiozero.RGBLED(21, 20, 16)
+primary = (0, 0, 1)
+success = (0, 1, 0)
+warning = (1, 0.5, 0)
+danger = (1, 0, 0)
+
+
 lights = Lights()
 motors = Motors()
 illuminatedButton = illuminatedPushButton()
 rotary = rotaryEncoder()
 
 
-import display.display as display
-import output
+def setOutput(speed, lightsEnabled):
+
+    global lastInteraction
+    lastInteraction = datetime.now()
+
+    if speed != None:
+        rotary.rotor.steps = speed
+        motors.setSpeed(speed)
+
+    if lightsEnabled != None:
+        lights.enable(lightsEnabled)
+        illuminatedButton.showLightsEnabled(lightsEnabled)
+    
+    displayStatus()
+
+
+def displayStatus():
+
+    if not sleeping:
+        if motors.getSpeed() == 0:
+            rgbLED.color = primary
+        elif motors.getSpeed() < 3:
+            rgbLED.color = danger
+        elif motors.getSpeed() < 6:
+            rgbLED.color = warning
+        elif motors.getSpeed() < 10:
+            rgbLED.color = success
+        else:
+            rgbLED.color = warning
+    
+    display.displayStatus(motors.getSpeed(), lights.getStatus())
+
+
+def displayStatusDaemon():
+
+    while True:
+
+        now = datetime.now()
+        sleepDate = lastInteraction + timedelta(seconds=5)
+
+        if sleepDate < now and motors.getSpeed() == 0:
+            display.putToSleep()
+            rgbLED.color = (0, 0, 0.2)
+
+        if display.lastReload + timedelta(seconds=5) < now and display.isSleeping == False:
+            display.displayStatus(motors.getSpeed(), lights.getStatus())
+
+        sleep(2)
+
+    
+displayThread = Thread(target=displayStatusDaemon, args=())
+displayThread.start()

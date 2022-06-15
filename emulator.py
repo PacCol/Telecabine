@@ -1,6 +1,11 @@
 # A class to emulate the Raspberry Pi GPIO module
 
-emulator = True
+emulator = False
+
+try:
+    import gpiozero
+except:
+    emulator = True
 
 class GPIO:
 
