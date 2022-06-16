@@ -12,8 +12,9 @@ from subprocess import check_call
 from time import sleep
 from threading import Thread
 
-import display.display as display
+from display.display import display
 from status import *
+from sse import sendStatus
 
 alimentation = "12v"
 
@@ -39,7 +40,7 @@ class illuminatedPushButton():
 
         def shutdown():
             display.displayOFF()
-            check_call(['sudo', 'poweroff'])
+            #check_call(['sudo', 'poweroff'])
 
         self.button.when_released = toggleStatus
         self.button.when_held = shutdown
@@ -59,12 +60,12 @@ class rotaryEncoder():
         self.rotaryButton = gpiozero.Button(14)
         self.rotor.when_rotated = self.setMotorsSpeed
         self.rotaryButton.when_released = self.stopMotors
+        self.rotaryButton.when_held = display.displaySettings
 
     def setMotorsSpeed(self):
         if self.rotor.steps < 0:
             self.rotor.steps = 0
         setOutput(self.rotor.steps, None)
-        sleep(0.05)
 
     def stopMotors(self):
         setOutput(0, None)
@@ -175,23 +176,33 @@ def displayStatus():
     
     display.displayStatus(motors.getSpeed(), lights.getStatus())
 
+    sendStatus(motors.getSpeed(), lights.getStatus(), motors.getStartTime())
+
 
 def displayStatusDaemon():
 
     while True:
 
         now = datetime.now()
-        sleepDate = lastInteraction + timedelta(seconds=5)
 
-        if sleepDate < now and motors.getSpeed() == 0:
+        if lastInteraction + timedelta(seconds=5) < now and motors.getSpeed() == 0 and display.getCurrentScreen == "Home":
             display.putToSleep()
-            rgbLED.color = (0, 0, 0.2)
+            rgbLED.color = (0, 0, 0.1)
+        
+        elif lastInteraction + timedelta(minutes=5) < now and display.getCurrentScreen == "Settings":
+            display.putToSleep()
+            rgbLED.color = (0, 0, 0.1)
 
-        if display.lastReload + timedelta(seconds=5) < now and display.isSleeping == False:
-            display.displayStatus(motors.getSpeed(), lights.getStatus())
+        if display.getLastReload() + timedelta(minutes=1) < now and display.isSleeping == False:
+            if display.getCurrentScreen() == "Home":
+                display.displayStatus(motors.getSpeed(), lights.getStatus())
+            elif display.getCurrentScreen() == "Settings":
+                display.displaySettings()
 
         sleep(2)
 
     
 displayThread = Thread(target=displayStatusDaemon, args=())
 displayThread.start()
+
+displayStatus()

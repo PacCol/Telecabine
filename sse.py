@@ -1,5 +1,6 @@
 import queue
 
+
 class MessageAnnouncer:
 
     def __init__(self):
@@ -17,10 +18,23 @@ class MessageAnnouncer:
             except queue.Full:
                 del self.listeners[i]
 
+
 announcer = MessageAnnouncer()
+
 
 def format_sse(data: str, event=None) -> str:
     msg = f'data: {data}\n\n'
     if event is not None:
         msg = f'event: {event}\n{msg}'
     return msg
+
+
+def sendStatus(motorsSpeed, ledStatus, startTime):
+    
+    if ledStatus:
+        ledStatus = "enabled"
+    else:
+        ledStatus= "disabled"
+
+    msg = format_sse("speed=" + str(motorsSpeed) + ",ledStatus=" + ledStatus + ",startTime=" + str(startTime))
+    announcer.announce(msg=msg)

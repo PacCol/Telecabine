@@ -9,13 +9,12 @@ if emulator:
 else:
     import gpiozero
 
+import sse
 import hardware
 
 app = Flask(__name__)
 
 cpu = gpiozero.CPUTemperature()
-
-import sse
 
 
 @app.route("/")
@@ -47,32 +46,19 @@ def listen():
 
 @app.route("/api/status", methods=["POST"])
 def pingStatus():
-    sendStatus()
+    sse.sendStatus(hardware.motors.getSpeed(), hardware.lights.getStatus(), hardware.motors.getStartTime())
     return "sended"
-
-
-def sendStatus():
-
-    if hardware.lights.getStatus():
-        ledStatus = "enabled"
-    else:
-        ledStatus= "disabled"
-
-    msg = sse.format_sse("speed=" + str(hardware.motors.getSpeed()) + ",ledStatus=" + ledStatus + ",startTime=" + str(hardware.motors.getStartTime()))
-    sse.announcer.announce(msg=msg)
 
 
 @app.route("/api/enablelights", methods=["POST"])
 def enableLights():
     hardware.setOutput(None, request.json["enable"])
-    sendStatus()
     return "enabled"
 
 
 @app.route("/api/speed", methods=["POST"])
 def setSpeed():
     hardware.setOutput(request.json["speed"], None)
-    sendStatus()
     return "changed"
 
 
