@@ -58,9 +58,32 @@ class rotaryEncoder():
         self.rotor = gpiozero.RotaryEncoder(15, 18, wrap=False, max_steps=10)
         self.rotor.steps = motors.getSpeed()
         self.rotaryButton = gpiozero.Button(14)
-        self.rotor.when_rotated = self.setMotorsSpeed
-        self.rotaryButton.when_released = self.stopMotors
-        self.rotaryButton.when_held = display.displaySettings
+        self.rotor.when_rotated = self.scroll
+        self.rotaryButton.when_released = self.click
+        self.rotaryButton.when_held = self.initSettings
+        self.wasHeld = False
+
+    def click(self):
+        if self.wasHeld == True:
+            self.wasHeld = False
+        else:
+            if display.getCurrentScreen() == "Home":
+                self.stopMotors()
+            elif display.getCurrentScreen() == "Settings":
+                status = display.displaySettings(True, None)
+                if status == "Exit":
+                    self.rotor.steps = motors.getSpeed()
+                    display.displayStatus(motors.getSpeed(), lights.getStatus())
+
+    def scroll(self):
+        if display.getCurrentScreen() == "Home":
+            self.setMotorsSpeed()
+        elif display.getCurrentScreen() == "Settings":
+            if self.rotor.steps > 3:
+                self.rotor.steps = 3
+            elif self.rotor.steps < 0:
+                self.rotor.steps = 0
+            display.displaySettings(False, self.rotor.steps)
 
     def setMotorsSpeed(self):
         if self.rotor.steps < 0:
@@ -69,6 +92,11 @@ class rotaryEncoder():
 
     def stopMotors(self):
         setOutput(0, None)
+
+    def initSettings(self):
+        self.wasHeld = True
+        self.rotor.steps = 0
+        display.displaySettings(False, self.rotor.steps)
 
 
 class Lights:
@@ -197,7 +225,7 @@ def displayStatusDaemon():
             if display.getCurrentScreen() == "Home":
                 display.displayStatus(motors.getSpeed(), lights.getStatus())
             elif display.getCurrentScreen() == "Settings":
-                display.displaySettings()
+                display.displaySettings(False, None)
 
         sleep(2)
 

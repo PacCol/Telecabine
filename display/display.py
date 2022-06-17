@@ -33,6 +33,7 @@ class display:
         self.isSleeping = False
         self.isDisplaying = False
         self.lastReload = datetime.now()
+        self.scroll = 0
 
     def getCurrentScreen(self):
         return self.currentScreen
@@ -75,10 +76,18 @@ class display:
 
             self.isDisplaying = False
 
-    def displaySettings(self):
+    def displaySettings(self, click, scroll):
 
         self.lastReload = datetime.now()
         self.currentScreen = "Settings"
+
+        if scroll != None:
+            self.scroll = scroll
+
+        if click:
+            if self.scroll == 0:
+                self.currentScreen = "Home"
+                return "Exit"
 
         if self.isSleeping:
             device.show()
@@ -96,13 +105,37 @@ class display:
             strLength = font.getsize(time)[0]
             draw.text((device.width - strLength, 0), time, fill=1, font=font)
 
-            draw.text((0, 0), "Paramètres", fill=1, font=font)
-            draw.text((0, 18), "\ue898", fill=1, font=smallIcon)
-            draw.text((16, 20), "Mot de passe", fill=1, font=font)
-            draw.text((0, 35), "\ue923", fill=1, font=smallIcon)
-            draw.text((16, 36), "Mise à jour", fill=1, font=font)
-            draw.text((0, 52), "\ue518", fill=1, font=smallIcon)
-            draw.text((16, 54), "Luminosité", fill=1, font=font)
+            if self.scroll == 0:
+                draw.rectangle((0, 0, 12, 12), outline=0, fill=1)
+                draw.text((0, 2), "\ue5c4", fill=0, font=icon)
+            else:
+                draw.text((0, 2), "\ue5c4", fill=1, font=icon)
+
+            draw.text((14, 0), "Paramètres", fill=1, font=font)
+
+            if self.scroll == 1:
+                draw.rectangle((0, 17, 14, 32), outline=0, fill=1)
+                draw.text((1, 18), "\ue898", fill=0, font=smallIcon)
+            else:
+                draw.text((1, 18), "\ue898", fill=1, font=smallIcon)
+
+            draw.text((17, 19), "Mot de passe", fill=1, font=font)
+
+            if self.scroll == 2:
+                draw.rectangle((0, 33, 14, 48), outline=0, fill=1)
+                draw.text((1, 34), "\ue923", fill=0, font=smallIcon)
+            else:
+                draw.text((1, 34), "\ue923", fill=1, font=smallIcon)
+
+            draw.text((17, 35), "Mise à jour", fill=1, font=font)
+
+            if self.scroll == 3:
+                draw.rectangle((0, 49, 15, 65), outline=0, fill=1)
+                draw.text((1, 50), "\ue518", fill=0, font=smallIcon)
+            else:
+                draw.text((1, 50), "\ue518", fill=1, font=smallIcon)
+
+            draw.text((17, 51), "Luminosité", fill=1, font=font)
 
         self.isDisplaying = False
 
