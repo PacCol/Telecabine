@@ -4,18 +4,28 @@ import git
 
 repo = git.Repo("./")
 
-def update():
+def updateCode():
     if isConnected():
-        print("UPDATING")
         ret = repo.remotes.origin.pull()
+        print(ret[0].flags)
         if ret[0].flags == 4:
-            print("No changes")
+            return "No changes"
         else:
-            print("Updated")
-        #os.system("bash install.sh")
-        print("UPDATED")
+            return "Updated"
     else:
-        print("no network")
+        return "Network unreachable"
+
+def updateModules():
+    if isConnected():
+        os.system("sudo apt-get install python3-pip")
+        os.system("sudo pip3 install GitPython")
+        os.system("sudo pip3 install luma.oled")
+        os.system("sudo pip3 install flask")
+        os.system("sudo pip3 install flask_sqlalchemy")
+        repo = git.Repo("./static/RealCSS")
+        repo.remotes.origin.pull()
+        return "Updated"
+    else:
         return "Network unreachable"
 
 def isConnected(host='http://github.com'):
@@ -23,7 +33,8 @@ def isConnected(host='http://github.com'):
         urllib.request.urlopen(host)
         return True
     except:
-        return False
+        return True
 
 if __name__ == "__main__":
-    update()
+    print(updateCode())
+    #print(updateModules())
