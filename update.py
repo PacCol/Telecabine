@@ -56,6 +56,6 @@ if __name__ == "__main__":
         print("Network error, try again later")"""
     pass
 
-# This example shows the various types of allowed ref-specs
-for entry in repo.heads.master.commit.tree:
-    print(entry)
+git = repo.git
+print(repo.tags)
+#print(git.log())
