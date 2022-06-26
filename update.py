@@ -39,7 +39,7 @@ def pipInstall(module):
         return "Network unreachable"
 
 if __name__ == "__main__":
-    print("Updating code...")
+    """print("Updating code...")
     ret = updateCode()
     if ret == "No changes":
         print("No updates available")
@@ -53,4 +53,9 @@ if __name__ == "__main__":
         elif _ret == "Network unreachable":
             print("Network error, please retry now to avoid any corruption!")
     elif ret == "Network unreachable":
-        print("Network error, try again later")
+        print("Network error, try again later")"""
+    pass
+
+# This example shows the various types of allowed ref-specs
+for entry in repo.heads.master.commit.tree:
+    print(entry)
