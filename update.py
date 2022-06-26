@@ -2,13 +2,16 @@ import os
 import urllib.request
 import git
 
-g = git.cmd.Git("./")
+repo = git.Repo("./")
 
 def update():
     if isConnected():
         print("UPDATING")
-        #os.system("git pull origin master")
-        g.pull()
+        ret = repo.remotes.origin.pull()
+        if ret[0].flags == 4:
+            print("No changes")
+        else:
+            print("Updated")
         #os.system("bash install.sh")
         print("UPDATED")
     else:
