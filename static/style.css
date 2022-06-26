@@ -11,7 +11,7 @@ body {
 
 .bg-img .navbar h3,
 .bg-img .navbar>i,
-.bg-img .app>div>h1,
+.bg-img .control>h1,
 .bg-img .app>div>h3,
 .bg-img .app>div>p {
     text-shadow: 0 0 2px #000000;

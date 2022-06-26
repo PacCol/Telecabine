@@ -1,4 +1,5 @@
 from emulator import emulator
+#from db import db
 
 if emulator:
     from emulator import gpiozero, i2c, sh1106, canvas
@@ -26,7 +27,6 @@ smallIcon = ImageFont.truetype(iconPath, 14)
 icon = ImageFont.truetype(iconPath, 12)
 bigIcon = ImageFont.truetype(iconPath, 50)
 
-
 class display:
 
     def __init__(self):
@@ -37,7 +37,7 @@ class display:
         self.isDisplaying = False
         self.lastReload = datetime.now()
         self.scroll = 0
-
+    
     def getCurrentScreen(self):
         return self.currentScreen
 
@@ -75,7 +75,7 @@ class display:
             strLength = bigFont.getsize(speed)[0]
             draw.text(((device.width - strLength) / 2, 18), speed, fill=1, font=bigFont)
 
-            self.isDisplaying = False
+        self.isDisplaying = False
 
     def displaySettings(self, click, direction, currentSetting):
 
@@ -174,11 +174,12 @@ class display:
 
                 self.contrast = (self.scroll + 1) * 24
                 device.contrast(self.contrast)
+                # set database value
 
                 draw.text((0, 21), "\ue15b", fill=1, font=icon)
                 draw.text((58, 21), "\ue518", fill=1, font=icon)
                 draw.text((116, 21), "\ue145", fill=1, font=icon)
-                
+                    
                 draw.rectangle((1, 36, int((self.contrast / 240) * (device.width - 2)), 39), outline=0, fill=1)
 
                 draw.text((1, 45), "Appuyez sur la molette pour", fill=1, font=smallFont)

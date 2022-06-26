@@ -7,3 +7,5 @@ git clone https://github.com/PacCol/RealCSS.git
 sudo apt-get install python3-pip
 sudo pip3 install luma.oled
 sudo pip3 install flask
+sudo pip3 install flask_sqlalchemy
+sudo pip3 install python-git
