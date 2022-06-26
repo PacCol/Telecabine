@@ -62,6 +62,12 @@ def setSpeed():
     return "changed"
 
 
+@app.route("/api/settings", methods=["POST"])
+def displaySettings():
+    hardware.openSettings()
+    return "opened"
+
+
 @app.route("/api/cpuTemp", methods=["GET"])
 def getCPUTemp():
     return str(int(cpu.temperature)) + " °C"

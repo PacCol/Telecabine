@@ -17,6 +17,7 @@ device = sh1106(serial, rotate=0, width=128, height=64)
 device.contrast(240)
 
 fontPath = "display/montserrat400.ttf"
+smallFont = ImageFont.truetype(fontPath, 8)
 font = ImageFont.truetype(fontPath, 10)
 bigFont = ImageFont.truetype(fontPath, 32)
 
@@ -30,6 +31,8 @@ class display:
 
     def __init__(self):
         self.currentScreen = "Home"
+        self.currentSetting = "General"
+        self.contrast = 240
         self.isSleeping = False
         self.isDisplaying = False
         self.lastReload = datetime.now()
@@ -70,24 +73,48 @@ class display:
 
             speed = str(motorsSpeed) + "/10"
             strLength = bigFont.getsize(speed)[0]
-            draw.text(((device.width - strLength) / 2, 17), speed, fill=1, font=bigFont)
-
-            #draw.rectangle((0, device.height - 2, int((motorsSpeed / 10) * device.width), device.height), outline=0, fill=1)
+            draw.text(((device.width - strLength) / 2, 18), speed, fill=1, font=bigFont)
 
             self.isDisplaying = False
 
-    def displaySettings(self, click, scroll):
+    def displaySettings(self, click, direction, currentSetting):
 
         self.lastReload = datetime.now()
         self.currentScreen = "Settings"
 
-        if scroll != None:
-            self.scroll = scroll
+        if currentSetting != None:
+            self.currentSetting = currentSetting
+            self.scroll = 0
+
+        if direction == "Down":
+            self.scroll += 1
+        elif direction == "Up":
+            self.scroll -= 1
+
+        def limitScroll(scrollLimit):
+            if self.scroll > scrollLimit:
+                self.scroll = 0
+            elif self.scroll < 0:
+                self.scroll = scrollLimit
+
+        if self.currentSetting == "General":
+            limitScroll(3)
+        elif self.currentSetting == "Brightness":
+            limitScroll(9)
 
         if click:
-            if self.scroll == 0:
-                self.currentScreen = "Home"
-                return "Exit"
+            if self.currentSetting == "General":
+                if self.scroll == 0:
+                    self.currentScreen = "Home"
+                    return "Exit"
+                elif self.scroll == 3:
+                    self.currentSetting = "Brightness"
+                    self.scroll = 9
+                    # set the contrast to the database value
+            elif self.currentSetting == "Brightness":
+                self.currentSetting = "General"
+                self.scroll = 3
+                limitScroll(3)
 
         if self.isSleeping:
             device.show()
@@ -105,37 +132,57 @@ class display:
             strLength = font.getsize(time)[0]
             draw.text((device.width - strLength, 0), time, fill=1, font=font)
 
-            if self.scroll == 0:
-                draw.rectangle((0, 0, 12, 12), outline=0, fill=1)
-                draw.text((0, 2), "\ue5c4", fill=0, font=icon)
-            else:
-                draw.text((0, 2), "\ue5c4", fill=1, font=icon)
+            if self.currentSetting == "General":
 
-            draw.text((14, 0), "Paramètres", fill=1, font=font)
+                if self.scroll == 0:
+                    draw.rectangle((0, 0, 12, 12), outline=0, fill=1)
+                    draw.text((0, 2), "\ue5c4", fill=0, font=icon)
+                else:
+                    draw.text((0, 2), "\ue5c4", fill=1, font=icon)
 
-            if self.scroll == 1:
-                draw.rectangle((0, 17, 14, 32), outline=0, fill=1)
-                draw.text((1, 18), "\ue898", fill=0, font=smallIcon)
-            else:
-                draw.text((1, 18), "\ue898", fill=1, font=smallIcon)
+                draw.text((14, 0), "Paramètres", fill=1, font=font)
 
-            draw.text((17, 19), "Mot de passe", fill=1, font=font)
+                if self.scroll == 1:
+                    draw.rectangle((0, 17, 14, 32), outline=0, fill=1)
+                    draw.text((1, 18), "\ue898", fill=0, font=smallIcon)
+                else:
+                    draw.text((1, 18), "\ue898", fill=1, font=smallIcon)
 
-            if self.scroll == 2:
-                draw.rectangle((0, 33, 14, 48), outline=0, fill=1)
-                draw.text((1, 34), "\ue923", fill=0, font=smallIcon)
-            else:
-                draw.text((1, 34), "\ue923", fill=1, font=smallIcon)
+                draw.text((17, 19), "Mot de passe", fill=1, font=font)
 
-            draw.text((17, 35), "Mise à jour", fill=1, font=font)
+                if self.scroll == 2:
+                    draw.rectangle((0, 33, 14, 48), outline=0, fill=1)
+                    draw.text((1, 34), "\ue923", fill=0, font=smallIcon)
+                else:
+                    draw.text((1, 34), "\ue923", fill=1, font=smallIcon)
 
-            if self.scroll == 3:
-                draw.rectangle((0, 49, 15, 65), outline=0, fill=1)
-                draw.text((1, 50), "\ue518", fill=0, font=smallIcon)
-            else:
-                draw.text((1, 50), "\ue518", fill=1, font=smallIcon)
+                draw.text((17, 35), "Mise à jour", fill=1, font=font)
 
-            draw.text((17, 51), "Luminosité", fill=1, font=font)
+                if self.scroll == 3:
+                    draw.rectangle((0, 49, 15, 65), outline=0, fill=1)
+                    draw.text((1, 50), "\ue518", fill=0, font=smallIcon)
+                else:
+                    draw.text((1, 50), "\ue518", fill=1, font=smallIcon)
+
+                draw.text((17, 51), "Luminosité", fill=1, font=font)
+
+            elif self.currentSetting == "Brightness":
+
+                draw.text((0, 0), "Luminosité", fill=1, font=font)
+
+                draw.rectangle((0, 35, device.width - 1, 40), outline=1, fill=0)
+
+                self.contrast = (self.scroll + 1) * 24
+                device.contrast(self.contrast)
+
+                draw.text((0, 21), "\ue15b", fill=1, font=icon)
+                draw.text((58, 21), "\ue518", fill=1, font=icon)
+                draw.text((116, 21), "\ue145", fill=1, font=icon)
+                
+                draw.rectangle((1, 36, int((self.contrast / 240) * (device.width - 2)), 39), outline=0, fill=1)
+
+                draw.text((1, 45), "Appuyez sur la molette pour", fill=1, font=smallFont)
+                draw.text((1, 56), "confirmer", fill=1, font=smallFont)
 
         self.isDisplaying = False
 

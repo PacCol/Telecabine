@@ -58,7 +58,8 @@ class rotaryEncoder():
         self.rotor = gpiozero.RotaryEncoder(15, 18, wrap=False, max_steps=10)
         self.rotor.steps = motors.getSpeed()
         self.rotaryButton = gpiozero.Button(14)
-        self.rotor.when_rotated = self.scroll
+        self.rotor.when_rotated_clockwise = self.scrollDown
+        self.rotor.when_rotated_counter_clockwise = self.scrollUp
         self.rotaryButton.when_released = self.click
         self.rotaryButton.when_held = self.initSettings
         self.wasHeld = False
@@ -70,20 +71,22 @@ class rotaryEncoder():
             if display.getCurrentScreen() == "Home":
                 self.stopMotors()
             elif display.getCurrentScreen() == "Settings":
-                status = display.displaySettings(True, None)
+                status = display.displaySettings(True, None, None)
                 if status == "Exit":
                     self.rotor.steps = motors.getSpeed()
                     display.displayStatus(motors.getSpeed(), lights.getStatus())
 
-    def scroll(self):
+    def scrollUp(self):
+        self.scroll("Up")
+
+    def scrollDown(self):
+        self.scroll("Down")
+
+    def scroll(self, direction):
         if display.getCurrentScreen() == "Home":
             self.setMotorsSpeed()
         elif display.getCurrentScreen() == "Settings":
-            if self.rotor.steps > 3:
-                self.rotor.steps = 3
-            elif self.rotor.steps < 0:
-                self.rotor.steps = 0
-            display.displaySettings(False, self.rotor.steps)
+            display.displaySettings(False, direction, None)
 
     def setMotorsSpeed(self):
         if self.rotor.steps < 0:
@@ -95,8 +98,11 @@ class rotaryEncoder():
 
     def initSettings(self):
         self.wasHeld = True
-        self.rotor.steps = 0
-        display.displaySettings(False, self.rotor.steps)
+        display.displaySettings(False, None, "General")
+
+
+def openSettings():
+    display.displaySettings(False, None, "General")
 
 
 class Lights:
@@ -225,7 +231,7 @@ def displayStatusDaemon():
             if display.getCurrentScreen() == "Home":
                 display.displayStatus(motors.getSpeed(), lights.getStatus())
             elif display.getCurrentScreen() == "Settings":
-                display.displaySettings(False, None)
+                display.displaySettings(False, None, None)
 
         sleep(2)
 

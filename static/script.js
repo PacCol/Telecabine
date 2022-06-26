@@ -365,6 +365,36 @@ function setImg() {
 
 
 /////////////////////////////////////////
+//////////// OPEN SETTINGS //////////////
+/////////////////////////////////////////
+
+function openSettings() {
+
+    loader(true);
+
+    $.ajax({
+        type: "POST",
+        url: "/api/settings",
+
+        success: function() {
+            loader(false);
+            alertBox("Paramètres ouverts", "Les paramètres ont bien été ouvert sur votre appareil, veuillez consulter l'écran faire des réglages. Vous pouvez également ouvrir les paramètres en appuyant longtemps sur la molette.", `
+                <button class="btn btn-lt primary btn-align-right ripple-effect cancel">Fermer</button>`);
+        },
+
+        error: function() {
+            loader(false);
+            networkError();
+        },
+
+        timeout: 3000
+    });
+}
+
+$("#openSettings").click(openSettings);
+
+
+/////////////////////////////////////////
 //////////// CPU TEMP ///////////////////
 /////////////////////////////////////////
 
