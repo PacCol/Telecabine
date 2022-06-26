@@ -13,6 +13,8 @@ from time import sleep
 from PIL import ImageFont
 from datetime import datetime
 
+import update
+
 serial = i2c(port=1, address=0x3c)
 device = sh1106(serial, rotate=0, width=128, height=64)
 device.contrast(240)
@@ -25,7 +27,7 @@ bigFont = ImageFont.truetype(fontPath, 32)
 iconPath = "display/material-design-icons-round.ttf"
 smallIcon = ImageFont.truetype(iconPath, 14)
 icon = ImageFont.truetype(iconPath, 12)
-bigIcon = ImageFont.truetype(iconPath, 50)
+bigIcon = ImageFont.truetype(iconPath, 40)
 
 class display:
 
@@ -40,6 +42,9 @@ class display:
     
     def getCurrentScreen(self):
         return self.currentScreen
+
+    def getCurrentSetting(self):
+        return self.currentSetting
 
     def getLastReload(self):
         return self.lastReload
@@ -99,6 +104,8 @@ class display:
 
         if self.currentSetting == "General":
             limitScroll(3)
+        elif self.currentSetting == "Update":
+            limitScroll(1)
         elif self.currentSetting == "Brightness":
             limitScroll(9)
 
@@ -107,14 +114,22 @@ class display:
                 if self.scroll == 0:
                     self.currentScreen = "Home"
                     return "Exit"
+                elif self.scroll == 2:
+                    self.currentSetting = "Update"
+                    self.scroll = 0
                 elif self.scroll == 3:
                     self.currentSetting = "Brightness"
-                    self.scroll = 9
+                    self.scroll = 8
                     # set the contrast to the database value
+            elif self.currentSetting == "Update":
+                if self.scroll == 0:
+                    self.currentSetting = "UpdateStarted"
+                elif self.scroll == 1:
+                    self.currentSetting = "General"
+                    self.scroll = 2
             elif self.currentSetting == "Brightness":
                 self.currentSetting = "General"
                 self.scroll = 3
-                limitScroll(3)
 
         if self.isSleeping:
             device.show()
@@ -182,8 +197,52 @@ class display:
                     
                 draw.rectangle((1, 36, int((self.contrast / 240) * (device.width - 2)), 39), outline=0, fill=1)
 
-                draw.text((1, 45), "Appuyez sur la molette pour", fill=1, font=smallFont)
-                draw.text((1, 56), "confirmer", fill=1, font=smallFont)
+                draw.text((0, 45), "Appuyez sur la molette pour", fill=1, font=smallFont)
+                draw.text((0, 56), "confirmer", fill=1, font=smallFont)
+
+            elif self.currentSetting == "Update":
+
+                draw.text((0, 0), "Mise à jour", fill=1, font=font)
+
+                if self.scroll == 0:
+                    draw.rectangle((0, 28, 64, 40), outline=1, fill=1)
+                    draw.rectangle((64, 28, 127, 40), outline=1, fill=0)
+                    draw.text((25, 30), "OK", fill=0, font=smallFont)
+                    draw.text((80, 30), "Annuler", fill=1, font=smallFont)
+                elif self.scroll == 1:
+                    draw.rectangle((0, 28, 64, 40), outline=1, fill=0)
+                    draw.rectangle((64, 28, 127, 40), outline=1, fill=1)
+                    draw.text((25, 30), "OK", fill=1, font=smallFont)
+                    draw.text((80, 30), "Annuler", fill=0, font=smallFont)
+
+                draw.text((0, 45), "Avant toute chose, vérifiez que", fill=1, font=smallFont)
+                draw.text((0, 56), "votre réseau Wi-Fi est stable.", fill=1, font=smallFont)
+
+            elif self.currentSetting == "UpdateStarted":
+
+                draw.text((0, 0), "Recherche de MAJ", fill=1, font=font)
+
+                draw.text((57, 29), "\ue8b6", fill=1, font=smallIcon)
+
+                draw.text((0, 54), "Ne pas interrompre l'appareil.", fill=1, font=smallFont)
+
+                ret = updateCode()
+                if ret == "No changes":
+                    device.clear()
+                    draw.text((0, 0), "Aucune MAJ", fill=1, font=font)
+                    draw.text((57, 29), "\uea76", fill=1, font=smallIcon)
+                    draw.text((0, 54), "Ne pas interrompre l'appareil.", fill=1, font=smallFont)
+                elif ret == "Updated":
+                    print("Code updated")
+                    print("Updating modules, make sure your internet connection is stable...")
+                    _ret = updateModules()
+                    if _ret == "Success":
+                        print("Modules updated")
+                        print("Now, you can restart the device.")
+                    elif _ret == "Network unreachable":
+                        print("Network error, please retry now to avoid any corruption!")
+                elif ret == "Network unreachable":
+                    print("Network error, try again later")
 
         self.isDisplaying = False
 

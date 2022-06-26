@@ -32,11 +32,12 @@ class illuminatedPushButton():
         self.led.pulse()
 
         def toggleStatus():
-            if lights.getStatus():
-                setOutput(None, False)
-            else:
-                setOutput(None, True)
-            sleep(0.4)
+            if display.getCurrentScreen() == "Home":
+                if lights.getStatus():
+                    setOutput(None, False)
+                else:
+                    setOutput(None, True)
+                sleep(0.4)
 
         def shutdown():
             display.displayOFF()
@@ -230,7 +231,7 @@ def displayStatusDaemon():
         if display.getLastReload() + timedelta(minutes=1) < now and display.isSleeping == False:
             if display.getCurrentScreen() == "Home":
                 display.displayStatus(motors.getSpeed(), lights.getStatus())
-            elif display.getCurrentScreen() == "Settings":
+            elif display.getCurrentScreen() == "Settings" and display.getCurrentSetting() != "UpdateStarted":
                 display.displaySettings(False, None, None)
 
         sleep(2)
