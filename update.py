@@ -57,5 +57,5 @@ if __name__ == "__main__":
     pass
 
 git = repo.git
-print(repo.tags)
-#print(git.log())
+print(repo.tags[0])
+print(repo.tags[0].commit)
