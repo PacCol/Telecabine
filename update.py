@@ -2,11 +2,14 @@ import os
 import urllib.request
 import git
 
+g = git.cmd.Git("./")
+
 def update():
     if isConnected():
         print("UPDATING")
-        os.system("git pull origin master")
-        os.system("bash install.sh")
+        #os.system("git pull origin master")
+        g.pull()
+        #os.system("bash install.sh")
         print("UPDATED")
     else:
         print("no network")
