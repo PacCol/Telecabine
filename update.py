@@ -1,5 +1,6 @@
 import os
 import urllib.request
+import git
 
 def update():
     if isConnected():
