@@ -232,6 +232,7 @@ class display:
             ret = update.updateCode()
 
             def reboot():
+                sleep(2)
                 print("REBOOTING...")
                 sys.exit()
                 #check_call(['sudo', 'reboot'])
@@ -258,7 +259,7 @@ class display:
                         draw.text((0, 0), "Mise à jour terminée", fill=1, font=font)
                         draw.text((57, 29), "\ue876", fill=1, font=smallIcon)
                         draw.text((0, 54), "Le logiciel a bien été is à jour.", fill=1, font=smallFont)
-                        reboot()
+                    reboot()
                 elif _ret == "Network unreachable":
                     self.screen = "UpdateStarted"
                     device.clear()
