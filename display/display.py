@@ -257,7 +257,7 @@ class display:
                     with canvas(device) as draw:
                         draw.text((0, 0), "Mise à jour terminée", fill=1, font=font)
                         draw.text((55, 26), "\ue876", fill=1, font=mediumIcon)
-                        draw.text((0, 54), "Le logiciel a bien été is à jour.", fill=1, font=smallFont)
+                        draw.text((0, 54), "Le logiciel a bien été mis à jour.", fill=1, font=smallFont)
                     reboot()
                 elif _ret == "Network unreachable":
                     self.screen = "UpdateStarted"
