@@ -225,7 +225,6 @@ class display:
                 draw.text((0, 56), "votre réseau Wi-Fi est stable.", fill=1, font=smallFont)
 
         if self.currentSetting == "UpdateStarted":
-            print("UPDATE STARTED")
             with canvas(device) as draw:
                 draw.text((0, 0), "Recherche de MAJ", fill=1, font=font)
                 draw.text((55, 26), "\ue8b6", fill=1, font=mediumIcon)
@@ -239,7 +238,6 @@ class display:
                 #check_call(['sudo', 'reboot'])
 
             if ret == "No changes":
-                print("No changes")
                 self.currentSetting = "UpdateEnded"
                 device.clear()
                 with canvas(device) as draw:
