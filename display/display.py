@@ -12,6 +12,8 @@ else:
 from time import sleep
 from PIL import ImageFont
 from datetime import datetime
+from subprocess import check_call
+import sys
 
 import update
 
@@ -127,6 +129,9 @@ class display:
                 elif self.scroll == 1:
                     self.currentSetting = "General"
                     self.scroll = 2
+            elif self.currentSetting == "UpdateEnded":
+                self.currentSetting = "General"
+                self.scroll = 2
             elif self.currentSetting == "Brightness":
                 self.currentSetting = "General"
                 self.scroll = 3
@@ -218,35 +223,61 @@ class display:
                 draw.text((0, 45), "Avant toute chose, vérifiez que", fill=1, font=smallFont)
                 draw.text((0, 56), "votre réseau Wi-Fi est stable.", fill=1, font=smallFont)
 
-            elif self.currentSetting == "UpdateStarted":
-
+        if self.currentSetting == "UpdateStarted":
+            print("UPDATE STARTED")
+            with canvas(device) as draw:
                 draw.text((0, 0), "Recherche de MAJ", fill=1, font=font)
-
                 draw.text((57, 29), "\ue8b6", fill=1, font=smallIcon)
-
                 draw.text((0, 54), "Ne pas interrompre l'appareil.", fill=1, font=smallFont)
+            ret = update.updateCode()
 
-                ret = updateCode()
-                if ret == "No changes":
-                    device.clear()
+            def reboot():
+                print("REBOOTING...")
+                sys.exit()
+                #check_call(['sudo', 'reboot'])
+
+            if ret == "No changes":
+                print("No changes")
+                self.currentSetting = "UpdateEnded"
+                device.clear()
+                with canvas(device) as draw:
                     draw.text((0, 0), "Aucune MAJ", fill=1, font=font)
                     draw.text((57, 29), "\uea76", fill=1, font=smallIcon)
-                    draw.text((0, 54), "Ne pas interrompre l'appareil.", fill=1, font=smallFont)
-                elif ret == "Updated":
-                    print("Code updated")
-                    print("Updating modules, make sure your internet connection is stable...")
-                    _ret = updateModules()
-                    if _ret == "Success":
-                        print("Modules updated")
-                        print("Now, you can restart the device.")
-                    elif _ret == "Network unreachable":
-                        print("Network error, please retry now to avoid any corruption!")
-                elif ret == "Network unreachable":
-                    print("Network error, try again later")
+                    draw.text((0, 54), "Clickez pour retourner au menu", fill=1, font=smallFont)
+                
+            elif ret == "Updated":
+                device.clear()
+                with canvas(device) as draw:
+                    draw.text((0, 0), "Mise à jour installée", fill=1, font=font)
+                    draw.text((57, 29), "\ue8d7", fill=1, font=smallIcon)
+                    draw.text((0, 54), "Mise à jour des modules...", fill=1, font=smallFont)
+                _ret = updateModules()
+                if _ret == "Success":
+                    device.clear()
+                    with canvas(device) as draw:
+                        draw.text((0, 0), "Mise à jour terminée", fill=1, font=font)
+                        draw.text((57, 29), "\ue876", fill=1, font=smallIcon)
+                        draw.text((0, 54), "Le logiciel a bien été is à jour.", fill=1, font=smallFont)
+                        reboot()
+                elif _ret == "Network unreachable":
+                    self.screen = "UpdateStarted"
+                    device.clear()
+                    with canvas(device) as draw:
+                        draw.text((0, 0), "Erreur réseau", fill=1, font=font)
+                        draw.text((57, 29), "\ue000", fill=1, font=smallIcon)
+                        draw.text((0, 54), "Clickez pour réessayer.", fill=1, font=smallFont)
+                
+            elif ret == "Network unreachable":
+                device.clear()
+                with canvas(device) as draw:
+                    draw.text((0, 0), "Erreur réseau", fill=1, font=font)
+                    draw.text((57, 29), "\ue000", fill=1, font=smallIcon)
+                    draw.text((0, 54), "Réessayez plus tard...", fill=1, font=smallFont)
 
         self.isDisplaying = False
 
     def displayOFF(self):
+        self.isDisplaying = True
         with canvas(device) as draw:
             iconSize = bigIcon.getsize("\ue646")
             draw.text(((device.width - iconSize[0]) / 2, (device.height - iconSize[1]) / 2), "\ue646", fill=1, font=bigIcon)
