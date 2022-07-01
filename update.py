@@ -15,8 +15,8 @@ def updateCode():
     except:
         return "Network unreachable"
 
-def currentVersion():
-    return str(repo.tags[-1])
+def getCurrentVersion():
+    return str(repo.tags[-1]), str(repo.tags[-1].commit.message.replace("\n", " "))
 
 def updateModules():
     ret = pipInstall("GitPython luma.oled flask flask_sqlalchemy")
@@ -42,12 +42,18 @@ def pipInstall(module):
         return "Network unreachable"
 
 if __name__ == "__main__":
+    currentVersion = getCurrentVersion()
+    print("Current Version: " + currentVersion[0])
+    print("Description:     " + currentVersion[1])
     print("Updating code...")
     ret = updateCode()
     if ret == "No changes":
         print("No updates available")
     elif ret == "Updated":
         print("Code updated")
+        currentVersion = getCurrentVersion()
+        print("Current Version: " + currentVersion[0])
+        print("Description:     " + currentVersion[1])
         print("Updating modules, make sure your internet connection is stable...")
         _ret = updateModules()
         if _ret == "Success":

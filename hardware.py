@@ -103,7 +103,8 @@ class rotaryEncoder():
 
 
 def openSettings():
-    display.displaySettings(False, None, "General")
+    if display.getCurrentScreen != "Settings":
+        display.displaySettings(False, None, "General")
 
 
 class Lights:

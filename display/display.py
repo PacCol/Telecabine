@@ -13,12 +13,13 @@ from time import sleep
 from PIL import ImageFont
 from datetime import datetime
 from subprocess import check_call
+import os, sys
 
 import update
 
 serial = i2c(port=1, address=0x3c)
 device = sh1106(serial, rotate=0, width=128, height=64)
-device.contrast(240)
+device.contrast(180)
 
 fontPath = "display/montserrat400.ttf"
 smallFont = ImageFont.truetype(fontPath, 8)
@@ -116,13 +117,19 @@ class display:
                 if self.scroll == 0:
                     self.currentScreen = "Home"
                     return "Exit"
+                elif self.scroll == 1:
+                    self.currentSetting = "Brightness"
+                    self.scroll = 8
+                    # set the contrast to the database value
                 elif self.scroll == 2:
                     self.currentSetting = "Update"
                     self.scroll = 0
                 elif self.scroll == 3:
-                    self.currentSetting = "Brightness"
-                    self.scroll = 8
-                    # set the contrast to the database value
+                    self.currentSetting = "About"
+                    self.scroll = 0
+            elif self.currentSetting == "Brightness":
+                self.currentSetting = "General"
+                self.scroll = 1
             elif self.currentSetting == "Update":
                 if self.scroll == 0:
                     self.currentSetting = "UpdateStarted"
@@ -132,7 +139,7 @@ class display:
             elif self.currentSetting == "UpdateEnded":
                 self.currentSetting = "General"
                 self.scroll = 2
-            elif self.currentSetting == "Brightness":
+            elif self.currentSetting == "About":
                 self.currentSetting = "General"
                 self.scroll = 3
 
@@ -164,11 +171,11 @@ class display:
 
                 if self.scroll == 1:
                     draw.rectangle((0, 17, 14, 32), outline=0, fill=1)
-                    draw.text((1, 18), "\ue898", fill=0, font=smallIcon)
+                    draw.text((2, 19), "\ue518", fill=0, font=xsmallIcon)
                 else:
-                    draw.text((1, 18), "\ue898", fill=1, font=smallIcon)
+                    draw.text((2, 19), "\ue518", fill=1, font=xsmallIcon)
 
-                draw.text((17, 19), "Mot de passe", fill=1, font=font)
+                draw.text((19, 19), "Luminosité", fill=1, font=font)
 
                 if self.scroll == 2:
                     draw.rectangle((0, 33, 14, 48), outline=0, fill=1)
@@ -176,15 +183,15 @@ class display:
                 else:
                     draw.text((1, 34), "\ue923", fill=1, font=smallIcon)
 
-                draw.text((17, 35), "Mise à jour", fill=1, font=font)
+                draw.text((19, 35), "Mise à jour", fill=1, font=font)
 
                 if self.scroll == 3:
                     draw.rectangle((0, 49, 15, 65), outline=0, fill=1)
-                    draw.text((1, 50), "\ue518", fill=0, font=smallIcon)
+                    draw.text((2, 51), "\ue88e", fill=0, font=xsmallIcon)
                 else:
-                    draw.text((1, 50), "\ue518", fill=1, font=smallIcon)
+                    draw.text((2, 51), "\ue88e", fill=1, font=xsmallIcon)
 
-                draw.text((17, 51), "Luminosité", fill=1, font=font)
+                draw.text((19, 51), "À propos", fill=1, font=font)
 
             elif self.currentSetting == "Brightness":
 
@@ -206,9 +213,7 @@ class display:
                 draw.text((0, 56), "confirmer", fill=1, font=smallFont)
 
             elif self.currentSetting == "Update":
-
                 draw.text((0, 0), "Mise à jour", fill=1, font=font)
-
                 if self.scroll == 0:
                     draw.rectangle((0, 28, 64, 40), outline=1, fill=1)
                     draw.rectangle((64, 28, 127, 40), outline=1, fill=0)
@@ -219,9 +224,16 @@ class display:
                     draw.rectangle((64, 28, 127, 40), outline=1, fill=1)
                     draw.text((25, 30), "OK", fill=1, font=smallFont)
                     draw.text((80, 30), "Annuler", fill=0, font=smallFont)
-
                 draw.text((0, 45), "Avant toute chose, vérifiez que", fill=1, font=smallFont)
                 draw.text((0, 56), "votre réseau Wi-Fi est stable.", fill=1, font=smallFont)
+
+            elif self.currentSetting == "About":
+                draw.text((0, 0), "À propos", fill=1, font=font)
+
+                releaseLength = smallFont.getsize("Version: " + update.getCurrentVersion()[0])[0]
+                noteLength = smallFont.getsize("Note: " + update.getCurrentVersion()[1])[0]
+                draw.text(((device.width - releaseLength) / 2, 29), "Version: " + update.getCurrentVersion()[0], fill=1, font=smallFont)
+                draw.text(((device.width - noteLength) / 2, 41), "Note: " + update.getCurrentVersion()[1], fill=1, font=smallFont)
 
         if self.currentSetting == "UpdateStarted":
             with canvas(device) as draw:
@@ -234,6 +246,7 @@ class display:
                 sleep(2)
                 print("REBOOTING...")
                 #check_call(['sudo', 'reboot'])
+                os.execl(sys.executable, os.path.abspath(__file__), *sys.argv)
 
             if ret == "No changes":
                 self.currentSetting = "UpdateEnded"
@@ -241,7 +254,7 @@ class display:
                 with canvas(device) as draw:
                     draw.text((0, 0), "Aucune MAJ", fill=1, font=font)
                     draw.text((55, 26), "\uea76", fill=1, font=mediumIcon)
-                    draw.text((0, 54), "Clickez pour retourner au menu", fill=1, font=smallFont)
+                    draw.text((0, 54), "Clickez pour retourner au menu.", fill=1, font=smallFont)
                 
             elif ret == "Updated":
                 device.clear()
@@ -255,7 +268,7 @@ class display:
                     with canvas(device) as draw:
                         draw.text((0, 0), "Mise à jour terminée", fill=1, font=font)
                         draw.text((55, 26), "\ue876", fill=1, font=mediumIcon)
-                        draw.text((0, 54), "Le logiciel a bien été mis à jour.", fill=1, font=smallFont)
+                        draw.text((0, 54), update.getCurrentVersion()[0], fill=1, font=smallFont)
                     sleep(2)
                     device.clear()
                     with canvas(device) as draw:
