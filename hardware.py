@@ -103,7 +103,7 @@ class rotaryEncoder():
 
 
 def openSettings():
-    if display.getCurrentScreen != "Settings":
+    if display.getCurrentScreen() != "Settings":
         display.displaySettings(False, None, "General")
 
 
