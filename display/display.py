@@ -13,7 +13,6 @@ from time import sleep
 from PIL import ImageFont
 from datetime import datetime
 from subprocess import check_call
-import sys
 
 import update
 
@@ -234,7 +233,6 @@ class display:
             def reboot():
                 sleep(2)
                 print("REBOOTING...")
-                sys.exit()
                 #check_call(['sudo', 'reboot'])
 
             if ret == "No changes":
@@ -258,6 +256,12 @@ class display:
                         draw.text((0, 0), "Mise à jour terminée", fill=1, font=font)
                         draw.text((55, 26), "\ue876", fill=1, font=mediumIcon)
                         draw.text((0, 54), "Le logiciel a bien été mis à jour.", fill=1, font=smallFont)
+                    sleep(2)
+                    device.clear()
+                    with canvas(device) as draw:
+                        draw.text((0, 0), "Redémmarage...", fill=1, font=font)
+                        draw.text((55, 26), "\uf053", fill=1, font=mediumIcon)
+                        draw.text((0, 54), "Redémarage afin d'appliquer le patch...", fill=1, font=smallFont)
                     reboot()
                 elif _ret == "Network unreachable":
                     self.screen = "UpdateStarted"
