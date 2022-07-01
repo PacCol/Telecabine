@@ -260,7 +260,7 @@ class display:
                     device.clear()
                     with canvas(device) as draw:
                         draw.text((0, 0), "Redémmarage...", fill=1, font=font)
-                        draw.text((44, 26), "\uf053", fill=1, font=bigIcon)
+                        draw.text((44, 23), "\uf053", fill=1, font=bigIcon)
                     reboot()
                 elif _ret == "Network unreachable":
                     self.screen = "UpdateStarted"
