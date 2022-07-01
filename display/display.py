@@ -251,7 +251,7 @@ class display:
                     draw.text((0, 0), "Mise à jour installée", fill=1, font=font)
                     draw.text((57, 29), "\ue8d7", fill=1, font=smallIcon)
                     draw.text((0, 54), "Mise à jour des modules...", fill=1, font=smallFont)
-                _ret = updateModules()
+                _ret = update.updateModules()
                 if _ret == "Success":
                     device.clear()
                     with canvas(device) as draw:
