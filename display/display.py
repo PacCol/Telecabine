@@ -27,8 +27,9 @@ font = ImageFont.truetype(fontPath, 10)
 bigFont = ImageFont.truetype(fontPath, 32)
 
 iconPath = "display/material-design-icons-round.ttf"
+xsmallIcon = ImageFont.truetype(iconPath, 12)
 smallIcon = ImageFont.truetype(iconPath, 14)
-icon = ImageFont.truetype(iconPath, 12)
+mediumIcon = ImageFont.truetype(iconPath, 18)
 bigIcon = ImageFont.truetype(iconPath, 40)
 
 class display:
@@ -71,7 +72,7 @@ class display:
         with canvas(device) as draw:
 
             if lightsEnabled:
-                draw.text((0, 0), "\ue518", fill=1, font=icon)
+                draw.text((0, 0), "\ue518", fill=1, font=xsmallIcon)
 
             now = datetime.now()
             time = now.strftime("%H") + ":" + now.strftime("%M")
@@ -156,9 +157,9 @@ class display:
 
                 if self.scroll == 0:
                     draw.rectangle((0, 0, 12, 12), outline=0, fill=1)
-                    draw.text((0, 2), "\ue5c4", fill=0, font=icon)
+                    draw.text((0, 2), "\ue5c4", fill=0, font=xsmallIcon)
                 else:
-                    draw.text((0, 2), "\ue5c4", fill=1, font=icon)
+                    draw.text((0, 2), "\ue5c4", fill=1, font=xsmallIcon)
 
                 draw.text((14, 0), "Paramètres", fill=1, font=font)
 
@@ -196,9 +197,9 @@ class display:
                 device.contrast(self.contrast)
                 # set database value
 
-                draw.text((0, 21), "\ue15b", fill=1, font=icon)
-                draw.text((58, 21), "\ue518", fill=1, font=icon)
-                draw.text((116, 21), "\ue145", fill=1, font=icon)
+                draw.text((0, 21), "\ue15b", fill=1, font=xsmallIcon)
+                draw.text((58, 21), "\ue518", fill=1, font=xsmallIcon)
+                draw.text((116, 21), "\ue145", fill=1, font=xsmallIcon)
                     
                 draw.rectangle((1, 36, int((self.contrast / 240) * (device.width - 2)), 39), outline=0, fill=1)
 
@@ -227,7 +228,7 @@ class display:
             print("UPDATE STARTED")
             with canvas(device) as draw:
                 draw.text((0, 0), "Recherche de MAJ", fill=1, font=font)
-                draw.text((57, 29), "\ue8b6", fill=1, font=smallIcon)
+                draw.text((55, 26), "\ue8b6", fill=1, font=mediumIcon)
                 draw.text((0, 54), "Ne pas interrompre l'appareil.", fill=1, font=smallFont)
             ret = update.updateCode()
 
@@ -243,21 +244,21 @@ class display:
                 device.clear()
                 with canvas(device) as draw:
                     draw.text((0, 0), "Aucune MAJ", fill=1, font=font)
-                    draw.text((57, 29), "\uea76", fill=1, font=smallIcon)
+                    draw.text((55, 26), "\uea76", fill=1, font=mediumIcon)
                     draw.text((0, 54), "Clickez pour retourner au menu", fill=1, font=smallFont)
                 
             elif ret == "Updated":
                 device.clear()
                 with canvas(device) as draw:
                     draw.text((0, 0), "Mise à jour installée", fill=1, font=font)
-                    draw.text((57, 29), "\ue8d7", fill=1, font=smallIcon)
+                    draw.text((55, 26), "\ue8d7", fill=1, font=mediumIcon)
                     draw.text((0, 54), "Mise à jour des modules...", fill=1, font=smallFont)
                 _ret = update.updateModules()
                 if _ret == "Success":
                     device.clear()
                     with canvas(device) as draw:
                         draw.text((0, 0), "Mise à jour terminée", fill=1, font=font)
-                        draw.text((57, 29), "\ue876", fill=1, font=smallIcon)
+                        draw.text((55, 26), "\ue876", fill=1, font=mediumIcon)
                         draw.text((0, 54), "Le logiciel a bien été is à jour.", fill=1, font=smallFont)
                     reboot()
                 elif _ret == "Network unreachable":
@@ -265,14 +266,15 @@ class display:
                     device.clear()
                     with canvas(device) as draw:
                         draw.text((0, 0), "Erreur réseau", fill=1, font=font)
-                        draw.text((57, 29), "\ue000", fill=1, font=smallIcon)
+                        draw.text((55, 26), "\ue000", fill=1, font=mediumIcon)
                         draw.text((0, 54), "Clickez pour réessayer.", fill=1, font=smallFont)
-                
+
             elif ret == "Network unreachable":
+                self.currentSetting = "UpdateEnded"
                 device.clear()
                 with canvas(device) as draw:
                     draw.text((0, 0), "Erreur réseau", fill=1, font=font)
-                    draw.text((57, 29), "\ue000", fill=1, font=smallIcon)
+                    draw.text((55, 26), "\ue000", fill=1, font=mediumIcon)
                     draw.text((0, 54), "Réessayez plus tard...", fill=1, font=smallFont)
 
         self.isDisplaying = False
