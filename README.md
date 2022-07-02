@@ -1,7 +1,7 @@
 # Telecabine
 A simple Raspberry Pi web server to control a lego detachable gondola
 
-## To install
+## Installation
 Clone the repository as root.
 ```bash
 cd /home/pi
