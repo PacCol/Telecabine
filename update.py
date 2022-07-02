@@ -6,6 +6,7 @@ import subprocess
 repo = git.Repo("./")
 
 def updateCode():
+    ret = repo.remotes.origin.pull()
     try:
         ret = repo.remotes.origin.pull()
         if ret[0].flags == 4:
