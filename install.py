@@ -10,5 +10,5 @@ os.system("sudo pip3 install luma.oled")
 os.system("sudo pip3 install flask")
 os.system("sudo pip3 install flask_sqlalchemy")
 
-repo = git.Repo("./static/RealCSS")
-repo.remotes.origin.pull()
+from git import Repo
+Repo.clone_from("https://github.com/PacCol/RealCSS.git", "./static/RealCSS")
