@@ -216,6 +216,7 @@ class display:
 
         elif self.currentSetting == "About":
             with canvas(device) as draw:
+                draw.text((device.width - strLength, 0), time, fill=1, font=font)
                 draw.text((0, 0), "À propos", fill=1, font=font)
                 releaseLength = smallFont.getsize("Version: " + update.getCurrentVersion()[0])[0]
                 noteLength = smallFont.getsize("Note: " + update.getCurrentVersion()[1])[0]
