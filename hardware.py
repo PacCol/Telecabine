@@ -232,7 +232,7 @@ def displayStatusDaemon():
         if display.getLastReload() + timedelta(minutes=1) < now and display.isSleeping == False:
             if display.getCurrentScreen() == "Home":
                 display.displayStatus(motors.getSpeed(), lights.getStatus())
-            elif display.getCurrentScreen() == "Settings" and display.getCurrentSetting() == "General":
+            elif display.getCurrentScreen() == "Settings" and (display.getCurrentSetting() == "General" or display.getCurrentSetting() == "About"):
                 display.displaySettings(False, None, None)
 
         sleep(2)
