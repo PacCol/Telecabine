@@ -1,5 +1,4 @@
 from emulator import emulator
-#from db import db
 
 if emulator:
     from emulator import gpiozero, i2c, sh1106, canvas
