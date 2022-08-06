@@ -1,5 +1,5 @@
 from flask import Flask, redirect, send_from_directory, request, Response
-from datetime import datetime
+import socket
 
 from emulator import emulator
 from status import *
@@ -71,6 +71,13 @@ def displaySettings():
 @app.route("/api/cpuTemp", methods=["GET"])
 def getCPUTemp():
     return str(int(cpu.temperature)) + " °C"
+
+
+@app.route("/api/ip", methods=["GET"])
+def getIpAdress():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    return s.getsockname()[0]
 
 
 app.run(host="0.0.0.0", port=80)

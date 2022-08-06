@@ -426,6 +426,36 @@ $("#cpuTemp").click(showCPUTemp);
 
 
 /////////////////////////////////////////
+//////////// SHOW IP ADDRESS ////////////
+/////////////////////////////////////////
+
+function showIpAddress() {
+
+    loader(true);
+
+    $.ajax({
+        type: "GET",
+        url: "/api/ip",
+
+        success: function(response) {
+            loader(false);
+            alertBox("Adresse IP", "Voici l'adresse IP du boîtier: " + response, `
+                <button class="btn btn-lt primary btn-align-right ripple-effect cancel">Fermer</button>`);
+        },
+
+        error: function() {
+            loader(false);
+            networkError();
+        },
+
+        timeout: 3000
+    });
+}
+
+$("#showIpAddress").click(showIpAddress);
+
+
+/////////////////////////////////////////
 //////////// RESET //////////////////////
 /////////////////////////////////////////
 
