@@ -6,10 +6,11 @@ import subprocess
 repo = git.Repo("./")
 
 def updateCode():
+    currentVersion = getCurrentVersion()[0]
     ret = repo.remotes.origin.pull()
     try:
-        ret = repo.remotes.origin.pull()
-        if ret[0].flags == 4:
+        repo.remotes.origin.pull()
+        if getCurrentVersion()[0] == currentVersion:
             return "No changes"
         else:
             return "Updated"
