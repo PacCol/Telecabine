@@ -1,4 +1,4 @@
-# Telecabine
+# Telecabinee
 A simple Raspberry Pi web server to control a lego detachable gondola
 
 ## Installation
