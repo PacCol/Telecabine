@@ -221,11 +221,11 @@ def displayStatusDaemon():
 
         now = datetime.now()
 
-        if lastInteraction + timedelta(seconds=5) < now and motors.getSpeed() == 0 and display.getCurrentScreen == "Home":
+        if lastInteraction + timedelta(seconds=10) < now and motors.getSpeed() == 0 and display.getCurrentScreen() == "Home":
             display.putToSleep()
             rgbLED.color = (0, 0, 0.1)
         
-        elif lastInteraction + timedelta(minutes=5) < now and display.getCurrentScreen == "Settings":
+        elif lastInteraction + timedelta(minutes=5) < now and display.getCurrentScreen() == "Settings":
             display.putToSleep()
             rgbLED.color = (0, 0, 0.1)
 
