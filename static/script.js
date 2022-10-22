@@ -13,6 +13,7 @@ $("#settings-button").click(function() {
     $("#main").fadeOut(150).promise().done(function() {
         $("#settings").fadeIn(150);
         $("#home-button").fadeIn(150);
+        showCPUTemp();
     });
 });
 
@@ -420,8 +421,6 @@ function showCPUTemp() {
     });
 }
 
-showCPUTemp();
-
 $("#cpuTemp").click(showCPUTemp);
 
 
@@ -439,8 +438,10 @@ function showIpAddress() {
 
         success: function(response) {
             loader(false);
-            alertBox("Adresse IP", "Voici l'adresse IP du boîtier: " + response, `
-                <button class="btn btn-lt primary btn-align-right ripple-effect cancel">Fermer</button>`);
+            alertBox("Adresse IP", "Pour une connection plus stable, vous pouvez directement vous connecter en utilisant l'adresse IP du boîtier. Voici l'adresse IP du boîtier: " + response, `
+                <a href="http://${response}"><button class="btn btn-sp primary ripple-effect">Utiliser l'IP</button></a>
+                <button class="btn btn-lt btn-align-right primary ripple-effect cancel">Fermer</button>
+            `);
         },
 
         error: function() {

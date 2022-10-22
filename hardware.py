@@ -125,7 +125,7 @@ class Lights:
         if alimentation == "9v" and enable:
             self.brightnessPWM.start(100)
         elif enable:
-            self.brightnessPWM.start(80)
+            self.brightnessPWM.start(85)
         else:
             self.brightnessPWM.start(0)
 
@@ -155,7 +155,7 @@ class Motors():
         if alimentation == "9v":
             self.speedPWM.start(self.speed * 10)
         else:
-            self.speedPWM.start(int(self.speed * 10 * 0.9))
+            self.speedPWM.start(int(self.speed * 10 * 0.95))
         if self.speed > 0:
             GPIO.output(self.activationPin, True)
             GPIO.output(self.reversePin, False)
