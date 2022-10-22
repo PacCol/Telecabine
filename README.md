@@ -14,7 +14,7 @@ Now, we have to make sure that the server starts on startup.
 ```bash
 sudo vi /etc/rc.local
 ```
-We add two lines to the rc.local file...
+We add two lines to the rc.local file.
 ```
 #!/bin/sh -e
 #
