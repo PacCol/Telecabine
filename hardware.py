@@ -125,7 +125,7 @@ class Lights:
         if alimentation == "9v" and enable:
             self.brightnessPWM.start(100)
         elif enable:
-            self.brightnessPWM.start(87)
+            self.brightnessPWM.start(82)
         else:
             self.brightnessPWM.start(0)
 
