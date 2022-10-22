@@ -224,10 +224,6 @@ def displayStatusDaemon():
         if lastInteraction + timedelta(seconds=10) < now and motors.getSpeed() == 0 and display.getCurrentScreen() == "Home":
             display.putToSleep()
             rgbLED.color = (0, 0, 0.1)
-        
-        elif lastInteraction + timedelta(minutes=5) < now and display.getCurrentScreen() == "Settings":
-            display.putToSleep()
-            rgbLED.color = (0, 0, 0.1)
 
         if display.getLastReload() + timedelta(minutes=1) < now and display.isSleeping == False:
             if display.getCurrentScreen() == "Home":
