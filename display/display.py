@@ -13,7 +13,7 @@ from PIL import ImageFont
 from datetime import datetime
 from subprocess import check_call
 #import os
-import sys
+#import sys
 
 import update
 
@@ -232,7 +232,6 @@ class display:
 
             def reboot():
                 sleep(2)
-                #print("RESTARTING...")
                 check_call(['sudo', 'reboot'])
                 #os.execl(sys.executable, os.path.abspath(__file__), *sys.argv)
 
