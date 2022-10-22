@@ -12,7 +12,8 @@ from time import sleep
 from PIL import ImageFont
 from datetime import datetime
 from subprocess import check_call
-import os, sys
+#import os
+import sys
 
 import update
 
@@ -231,9 +232,9 @@ class display:
 
             def reboot():
                 sleep(2)
-                print("RESTARTING...")
-                #check_call(['sudo', 'reboot'])
-                os.execl(sys.executable, os.path.abspath(__file__), *sys.argv)
+                #print("RESTARTING...")
+                check_call(['sudo', 'reboot'])
+                #os.execl(sys.executable, os.path.abspath(__file__), *sys.argv)
 
             if ret == "No changes":
                 self.currentSetting = "UpdateEnded"
@@ -259,7 +260,7 @@ class display:
                     sleep(2)
                     device.clear()
                     with canvas(device) as draw:
-                        draw.text((0, 0), "Redémmarage...", fill=1, font=font)
+                        draw.text((0, 0), "Redémmarrage...", fill=1, font=font)
                         draw.text((44, 23), "\uf053", fill=1, font=bigIcon)
                         sleep(2)
                     reboot()
