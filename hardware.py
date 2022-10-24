@@ -152,10 +152,7 @@ class Motors():
         if self.speed == 0:
             self.startTime = datetime.now()
         self.speed = speed
-        if alimentation == "9v":
-            self.speedPWM.start(self.speed * 10)
-        else:
-            self.speedPWM.start(int(self.speed * 10 * 0.95))
+        self.speedPWM.start(self.speed * 10)
         if self.speed > 0:
             GPIO.output(self.activationPin, True)
             GPIO.output(self.reversePin, False)
